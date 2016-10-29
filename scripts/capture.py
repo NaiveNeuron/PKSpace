@@ -4,7 +4,6 @@ import os
 import click
 
 
-OUTPUT_DIR = '/home/pi/data'
 DIR = '%Y-%m-%d'
 FILE = '%H:%M:%S.png'
 
@@ -14,7 +13,9 @@ FILE = '%H:%M:%S.png'
               help='Warmup camera by capturing given number of frames')
 @click.option('--threshold', default=60,
               help='Threshold value for grayscale to binary image')
-def capture_and_save(warmup, threshold):
+@click.option('--path', default='.',
+              help='Path where to save captured images')
+def capture_and_save(warmup, threshold, path):
     cap = cv2.VideoCapture(0)
 
     #  warmup camera
@@ -35,10 +36,11 @@ def capture_and_save(warmup, threshold):
         now = datetime.datetime.now()
         current_date = now.strftime(DIR)
         current_time = now.strftime(FILE)
-        if not os.path.exists(os.path.join(OUTPUT_DIR, current_date)):
-            os.makedirs(os.path.join(OUTPUT_DIR, current_date))
-        cv2.imwrite(os.path.join(OUTPUT_DIR, current_date, current_time),
-                    frame)
+
+        if not os.path.exists(os.path.join(path, current_date)):
+            os.makedirs(os.path.join(path, current_date))
+        cv2.imwrite(os.path.join(path, current_date, current_time), frame)
+
     cap.release()
 
 
