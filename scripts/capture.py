@@ -8,6 +8,15 @@ DIR = '%Y-%m-%d'
 FILE = '%H:%M:%S.png'
 
 
+def matches(frame, threshold):
+    grayimg = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    _, thresh = cv2.threshold(grayimg, threshold, 255, cv2.THRESH_BINARY)
+    nonzero = cv2.countNonZero(thresh)
+
+    return thresh.size - nonzero < thresh.size // 3
+
+
 @click.command()
 @click.option('--warmup', default=15,
               help='Warmup camera by capturing given number of frames')
@@ -15,7 +24,13 @@ FILE = '%H:%M:%S.png'
               help='Threshold value for grayscale to binary image')
 @click.option('--path', default='.',
               help='Path where to save captured images')
-def capture_and_save(warmup, threshold, path):
+@click.option('--image', default='',
+              help='Specify path and get True/False for bright/dark image')
+def capture_and_save(warmup, threshold, path, image):
+    if image != '':
+        print(matches(cv2.imread(image, 1), threshold))
+        return
+
     cap = cv2.VideoCapture(0)
 
     #  warmup camera
@@ -27,12 +42,7 @@ def capture_and_save(warmup, threshold, path):
         print('Failed to capture frame, closing...')
         return
 
-    grayimg = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-    _, thresh = cv2.threshold(grayimg, threshold, 255, cv2.THRESH_BINARY)
-    nonzero = cv2.countNonZero(thresh)
-
-    if thresh.size - nonzero < thresh.size // 3:
+    if matches(frame, threshold):
         now = datetime.datetime.now()
         current_date = now.strftime(DIR)
         current_time = now.strftime(FILE)
