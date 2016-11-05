@@ -27,7 +27,7 @@ def matches(frame, threshold):
 @click.option('--image', default='',
               help='Specify path and get True/False for bright/dark image')
 def capture_and_save(warmup, threshold, path, image):
-    if image != '':
+    if image:
         msg = "Matches image {0} with threshold {1}: {2}"
         print(msg.format(image, threshold,
                          matches(cv2.imread(image, 1), threshold)))
