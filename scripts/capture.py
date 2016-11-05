@@ -28,7 +28,9 @@ def matches(frame, threshold):
               help='Specify path and get True/False for bright/dark image')
 def capture_and_save(warmup, threshold, path, image):
     if image != '':
-        print(matches(cv2.imread(image, 1), threshold))
+        msg = "Matches image {0} with threshold {1}: {2}"
+        print(msg.format(image, threshold,
+                         matches(cv2.imread(image, 1), threshold)))
         return
 
     cap = cv2.VideoCapture(0)
