@@ -8,13 +8,13 @@ DIR = '%Y-%m-%d'
 FILE = '%H:%M:%S.png'
 
 
-def matches(frame, threshold):
+def matches(frame, threshold, proportion=3):
     grayimg = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     _, thresh = cv2.threshold(grayimg, threshold, 255, cv2.THRESH_BINARY)
     nonzero = cv2.countNonZero(thresh)
 
-    return thresh.size - nonzero < thresh.size // 3
+    return thresh.size - nonzero < thresh.size // proportion
 
 
 @click.command()
