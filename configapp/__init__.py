@@ -1,0 +1,1 @@
+from .configapp import app
