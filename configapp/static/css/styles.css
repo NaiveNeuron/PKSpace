@@ -1,4 +1,3 @@
-
 body > div {
     margin-top: 10px;
 }
@@ -16,6 +15,19 @@ body > div {
 .btn:hover {
     background-color: #4A42DE;
 }
+.btn-save {
+    background-color: #32C31D;
+    color: black;
+}
+.btn-save:hover {
+    background-color: #238829;
+}
+.btn-undo {
+    background-color: #FF3F22;
+}
+.btn-undo:hover {
+    background-color: #FF1504;
+}
 
 #image-previews {
     max-height: 200px;
@@ -28,6 +40,15 @@ body > div {
     border: 4px solid white;
 }
 
-#canvas {
+#canvas-container:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+#canvas, #canvas-mask {
     border: 1px solid #ccc;
+    float: left;
+}
+#canvas-mask {
+    margin-left: 10px;
 }

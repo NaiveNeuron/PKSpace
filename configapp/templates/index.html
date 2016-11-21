@@ -10,7 +10,7 @@
 
 <body>
   <div>
-    <button class="btn btn-choose">Choose image</button>
+    <button class="btn btn-choose">Choose image &#x25BC;</button>
     <div id="image-previews">
       {% for image in images %}
         <img src="{{ url_for('data_image', filename=image) }}" width="128" height="96">
@@ -19,11 +19,49 @@
   </div>
 
   <div>
+    <button type="button" class="btn btn-save">Save polygon</button>
+    <button type="button" class="btn btn-undo">Undo</button>
+  </div>
+
+  <div id="canvas-container">
     <canvas id="canvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    <canvas id="canvas-mask" width="640" height="480">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
   </div>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+    var polygons = new Polygons();
+    
+    $(document).ready(function () {
+        $('#canvas').click(function(e) {
+            polygons.add_point(e.pageX, e.pageY);
+            polygons.redraw();
+        });
+
+        $('.btn-save').click(function() {
+            polygons.save_polygon();
+        });
+
+        $('.btn-undo').click(function() {
+            polygons.undo();
+        });
+
+        $('.btn-choose').click(function() {
+            $('#image-previews').slideToggle();
+        });
+
+        $('#image-previews img').click(function() {
+            $('#image-previews img').css('border-color', '#ffffff');
+
+            $(this).css('border-color', '#4A42DE');
+
+            polygons.set_image(this);
+        });
+    });
+  </script>
 </body>
 </html>
