@@ -24,6 +24,11 @@
   </div>
 
   <div id="canvas-container">
+    <div id="slider-container">
+      <input id="slider" type="range" name="slider" min="0" max="360"
+        value="0" step="0.05">
+      <input id="sliderval" type="text" name="sliderval" value="0">
+    <div>
     <canvas id="canvas" width="640" height="480">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
@@ -34,9 +39,9 @@
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
   <script>
-    var polygons = new Polygons();
-    
     $(document).ready(function () {
+        var polygons = new Polygons();
+
         $('#canvas').click(function(e) {
             polygons.add_point(e.pageX, e.pageY);
             polygons.redraw();
@@ -44,6 +49,8 @@
 
         $('.btn-save').click(function() {
             polygons.save_polygon();
+            $('#slider').val(0);
+            $('#sliderval').val(0);
         });
 
         $('.btn-undo').click(function() {
@@ -52,6 +59,12 @@
 
         $('.btn-choose').click(function() {
             $('#image-previews').slideToggle();
+        });
+
+        $('#slider').on('input change', function() {
+            var val = $(this).val();
+            $('#sliderval').val(val);
+            polygons.update_rotation(val);   
         });
 
         $('#image-previews img').click(function() {
