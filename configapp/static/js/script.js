@@ -14,6 +14,7 @@ function Polygons()
 Polygons.prototype.save_polygon = function() {
     this.polygons.push([this.current_polygon, this.rotation]);
     this.current_polygon = [];
+    this.rotation = 0;
     this.redraw();
 }
 
@@ -72,12 +73,15 @@ Polygons.prototype.draw_polygons = function() {
     }
 }
 
-Polygons.prototype.rotate_point = function(x, y) {
+Polygons.prototype.rotate_point = function(x, y, centerx, centery) {
     var angle = this.rotation * Math.PI / 180;
+    x -= centerx;
+    y -= centery;
+
     var _x = x*Math.cos(angle) - y*Math.sin(angle);
     var _y = x*Math.sin(angle) + y*Math.cos(angle);
 
-    return [_x, _y];
+    return [_x+centerx, _y+centery];
 }
 
 Polygons.prototype.draw_mask = function() {
@@ -87,18 +91,30 @@ Polygons.prototype.draw_mask = function() {
         
         this.ctx2.beginPath();
         
+        var centerx = 0;
+        var centery = 0;
+        for (var i = 0; i < this.current_polygon.length; i++){
+            centerx += this.current_polygon[i][0];
+            centery += this.current_polygon[i][1];
+        }
+        centerx = centerx / this.current_polygon.length;
+        centery = centery / this.current_polygon.length;
+
         var moved = this.rotate_point(this.current_polygon[0][0],
-                                      this.current_polygon[0][1]);
+                                      this.current_polygon[0][1],
+                                      centerx, centery);
         this.ctx2.moveTo(moved[0], moved[1]);
         for (var i = 1; i < this.current_polygon.length; i++) {
             moved = this.rotate_point(this.current_polygon[i][0],
-                                      this.current_polygon[i][1]);
+                                      this.current_polygon[i][1],
+                                      centerx, centery);
             this.ctx2.lineTo(moved[0], moved[1]);
         }
         this.ctx2.closePath();
-        this.ctx2.rotate(this.rotation * Math.PI / 180);
         this.ctx2.clip();
-        this.ctx2.drawImage(this.image, 0, 0);
+        this.ctx2.translate(centerx, centery);
+        this.ctx2.rotate(this.rotation * Math.PI / 180);
+        this.ctx2.drawImage(this.image, -centerx, -centery);
         this.ctx2.restore();
     }
 }

@@ -51,7 +51,7 @@ body > div {
 }
 #canvas-mask {
     margin-left: 10px;
-    /*background-color: #000;*/
+    background-color: #000;
 }
 
 #slider-container {
