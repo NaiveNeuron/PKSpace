@@ -123,3 +123,7 @@ Polygons.prototype.update_rotation = function(degrees) {
     this.rotation = degrees;
     this.draw_mask();
 }
+
+Polygons.prototype.generate_output = function(selector) {
+    $(selector).val('{' + JSON.stringify(this.polygons) + '}');
+}

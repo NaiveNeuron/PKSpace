@@ -21,6 +21,7 @@
   <div>
     <button type="button" class="btn btn-save">Save polygon</button>
     <button type="button" class="btn btn-undo">Undo</button>
+    <button type="button" class="btn btn-generate">Generate output</button>
   </div>
 
   <div id="canvas-container">
@@ -28,13 +29,18 @@
       <input id="slider" type="range" name="slider" min="0" max="360"
         value="0" step="0.05">
       <input id="sliderval" type="text" name="sliderval" value="0">
-    <div>
+    </div>
     <canvas id="canvas" width="640" height="480">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
     <canvas id="canvas-mask" width="640" height="480">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
+  </div>
+
+  <div id="output-container">
+    <h1>Output</h1>
+    <textarea name="output" rows="20" cols="100" readonly></textarea>
   </div>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
@@ -61,10 +67,14 @@
             $('#image-previews').slideToggle();
         });
 
+        $('.btn-generate').click(function() {
+            polygons.generate_output('#output-container textarea');
+        });
+
         $('#slider').on('input change', function() {
             var val = $(this).val();
             $('#sliderval').val(val);
-            polygons.update_rotation(val);   
+            polygons.update_rotation(parseFloat(val));   
         });
 
         $('#image-previews img').click(function() {
