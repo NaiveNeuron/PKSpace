@@ -4,11 +4,6 @@ import click
 import numpy as np
 
 
-def preprocess(img):
-    img_eq = exposure.equalize_hist(img)
-    return img_eq
-
-
 @click.command()
 @click.option('--filename',
               type=click.Path(exists=True),
@@ -18,63 +13,50 @@ def preprocess(img):
               required=True)
 def main(filename, background):
     img = cv.imread(filename)
-    img_background = cv.imread(background)
+    cv.imshow('original', img)
+    img_bg = cv.imread(background)
 
     gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    cv.imshow('gray_img', gray_img)
-    # gray_img = cv.equalizeHist(gray_img)
-    cv.imshow('gray_img after equalization', gray_img)
-    gray_img_background = cv.cvtColor(img_background, cv.COLOR_BGR2GRAY)
-    cv.imshow('gray_img_background', gray_img_background)
-    # gray_img_background = cv.equalizeHist(gray_img_background)
-    cv.imshow('gray_img_background after equalization', gray_img_background)
+    gray_img_background = cv.cvtColor(img_bg, cv.COLOR_BGR2GRAY)
 
     diff = cv.absdiff(gray_img, gray_img_background)
+    _, diff = cv.threshold(diff, 45, 255, cv.THRESH_BINARY)
+    diff = cv.erode(diff, np.ones((3, 3), np.uint8))
+    diff = cv.dilate(diff, np.ones((7, 7), np.uint8), iterations=2)
+    cv.imshow('adsf', diff)
+    bg_mask = cv.bitwise_not(diff)
+    img_a = img.copy()
+    img_a[:, :, 0] = cv.bitwise_and(cv.split(img)[0], cv.bitwise_not(bg_mask))
+    img_a[:, :, 1] = cv.bitwise_and(cv.split(img)[1], cv.bitwise_not(bg_mask))
+    img_a[:, :, 2] = cv.bitwise_and(cv.split(img)[2], cv.bitwise_not(bg_mask))
 
-    cv.imshow('img', img)
-    cv.imshow('img_background', img_background)
-    cv.imshow('diff', diff)
+    im = cv.cvtColor(img_a, cv.COLOR_RGB2LAB)
+    cv.imshow('lab', im)
+    im = im.reshape((-1, 3))
 
-    clahe = cv.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    cl1 = clahe.apply(gray_img)
-    cv.imshow('clahe img', cl1)
-    cl2 = clahe.apply(gray_img_background)
-    cv.imshow('clahe img_background', cl2)
+    # convert to np.float32
+    im = np.float32(im)
 
-    cl_diff = cv.absdiff(cl1, cl2)
-    cv.imshow('clahe diff', cl_diff)
+    # define criteria, number of clusters(K) and apply kmeans()
+    criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 3, 1.0)
+    k = 5
+    ret, label, center = cv.kmeans(im, k, criteria, 10,
+                                   cv.KMEANS_RANDOM_CENTERS)
 
-    cl_diff_cleared = cv.medianBlur(cl_diff, 3)
-    cv.imshow('clahe diff medianBlur', cl_diff_cleared)
+    lt = label.reshape(img.shape[:2])
+    lt = lt == 0
+    t = lt.astype('uint8') * 255
+    cv.imshow('adf', cv.bitwise_and(img_a, img_a, mask=cv.bitwise_not(t)))
+    # Now convert back into uint8, and make original image
+    center = np.uint8(center)
+    res = center[label.flatten()]
+    res2 = res.reshape((img.shape))
+    cv.imshow('kmeans', res2)
 
-    cl_diff_cleared_bilateral = cv.bilateralFilter(cl_diff, 9, 75, 75)
-    cv.imshow('clahe diff bilateralFilter', cl_diff_cleared_bilateral)
-
-    diff_cleared = cv.medianBlur(diff, 3)
-    cv.imshow('diff medianBlur', diff_cleared)
-
-    diff_cleared_bilateral = cv.bilateralFilter(diff, 9, 75, 75)
-    cv.imshow('diff bilateralFilter', diff_cleared_bilateral)
-
-    kernel = np.ones((3, 3), np.uint8)
-
-    erosion = cv.erode(diff_cleared_bilateral, kernel, iterations=1)
-    cv.imshow('diff eroded', erosion)
-
-    th2 = cv.adaptiveThreshold(erosion, 255, cv.ADAPTIVE_THRESH_MEAN_C,
-                               cv.THRESH_BINARY, 5, 3)
-
-    thresholded = cv.adaptiveThreshold(erosion, 255,
-                                       cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                       cv.THRESH_BINARY, 15, 2)
-
-    cv.imshow('threshold', thresholded)
-    cv.imshow('threshold mean', th2)
-
-    kernel = np.ones((2, 2), np.uint8)
-    cv.imshow('threshold mean dilated', cv.dilate(th2, kernel, iterations=1))
+    cv.imshow('diff rgb', img_a)
+    cv.imwrite('diff.png', img_a)
+    cv.imshow('diff', bg_mask)
     cv.waitKey(0)
-
 
 if __name__ == '__main__':
     main()
