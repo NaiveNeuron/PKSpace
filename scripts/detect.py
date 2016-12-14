@@ -2,11 +2,15 @@
 import cv2 as cv
 import click
 import numpy as np
+import glob
+import pymeanshift as pms
 
 
-def preprocess(img):
-    img_eq = exposure.equalize_hist(img)
-    return img_eq
+def masks_from_folder(folder, img_ext='.png'):
+    glob_selector = '{}/pk*{}'.format(folder, img_ext)
+    for file in glob.glob(glob_selector):
+        mask_filename = '{}'.format(file)
+        yield mask_filename
 
 
 @click.command()
@@ -16,63 +20,51 @@ def preprocess(img):
 @click.option('--background',
               type=click.Path(exists=True),
               required=True)
-def main(filename, background):
+@click.option('--threshold',
+              type=float,
+              required=True)
+def main(filename, background, threshold):
     img = cv.imread(filename)
     img_background = cv.imread(background)
-
-    gray_img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    cv.imshow('gray_img', gray_img)
-    # gray_img = cv.equalizeHist(gray_img)
-    cv.imshow('gray_img after equalization', gray_img)
-    gray_img_background = cv.cvtColor(img_background, cv.COLOR_BGR2GRAY)
-    cv.imshow('gray_img_background', gray_img_background)
-    # gray_img_background = cv.equalizeHist(gray_img_background)
-    cv.imshow('gray_img_background after equalization', gray_img_background)
-
-    diff = cv.absdiff(gray_img, gray_img_background)
-
-    cv.imshow('img', img)
-    cv.imshow('img_background', img_background)
+    park_mask = cv.imread('../masks/mask_big.png', 0)
+    _, park_mask = cv.threshold(park_mask, 200, 255, cv.THRESH_BINARY)
+    diff_i = cv.bitwise_and(img, img, mask=park_mask.astype('uint8'))
+    diff_b = cv.bitwise_and(img_background, img_background,
+                            mask=park_mask.astype('uint8'))
+    (diff_i, _, _) = pms.segment(diff_i, spatial_radius=5, range_radius=5,
+                                 min_density=100)
+    (diff_b, _, _) = pms.segment(diff_b, spatial_radius=10, range_radius=10,
+                                 min_density=300)
+    cv.imshow('mean bg', diff_b)
+    diff = cv.absdiff(diff_i, diff_b)
     cv.imshow('diff', diff)
-
-    clahe = cv.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    cl1 = clahe.apply(gray_img)
-    cv.imshow('clahe img', cl1)
-    cl2 = clahe.apply(gray_img_background)
-    cv.imshow('clahe img_background', cl2)
-
-    cl_diff = cv.absdiff(cl1, cl2)
-    cv.imshow('clahe diff', cl_diff)
-
-    cl_diff_cleared = cv.medianBlur(cl_diff, 3)
-    cv.imshow('clahe diff medianBlur', cl_diff_cleared)
-
-    cl_diff_cleared_bilateral = cv.bilateralFilter(cl_diff, 9, 75, 75)
-    cv.imshow('clahe diff bilateralFilter', cl_diff_cleared_bilateral)
-
-    diff_cleared = cv.medianBlur(diff, 3)
-    cv.imshow('diff medianBlur', diff_cleared)
-
-    diff_cleared_bilateral = cv.bilateralFilter(diff, 9, 75, 75)
-    cv.imshow('diff bilateralFilter', diff_cleared_bilateral)
-
-    kernel = np.ones((3, 3), np.uint8)
-
-    erosion = cv.erode(diff_cleared_bilateral, kernel, iterations=1)
-    cv.imshow('diff eroded', erosion)
-
-    th2 = cv.adaptiveThreshold(erosion, 255, cv.ADAPTIVE_THRESH_MEAN_C,
-                               cv.THRESH_BINARY, 5, 3)
-
-    thresholded = cv.adaptiveThreshold(erosion, 255,
-                                       cv.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                       cv.THRESH_BINARY, 15, 2)
-
-    cv.imshow('threshold', thresholded)
-    cv.imshow('threshold mean', th2)
-
-    kernel = np.ones((2, 2), np.uint8)
-    cv.imshow('threshold mean dilated', cv.dilate(th2, kernel, iterations=1))
+    free_spots = 0
+    pk_var = []
+    masks = []
+    for mask_filename in masks_from_folder('../masks'):
+        mask = cv.imread(mask_filename, 0)
+        _, mask = cv.threshold(mask, 200, 255, cv.THRESH_BINARY)
+        masks.append(mask)
+        pk_space = cv.bitwise_and(diff, diff, mask=mask)
+        pk_means = np.mean(pk_space[np.nonzero(pk_space)])
+        pk_var.append(np.std(pk_space[np.nonzero(pk_space)]))
+        # cv.imshow('masksss', pk_space)
+        # cv.waitKey(0)
+    var_mean = np.mean(pk_var)
+    var_var = np.std(pk_var)
+    for i, var in enumerate(pk_var):
+        print(var, var/var_mean, (var-var_mean)/var_var)
+        z_score = (var-var_mean)/var_var
+        if z_score < threshold:
+            free_spots += 1
+            mask = cv.cvtColor(masks[i], cv.COLOR_GRAY2RGB)
+            mask[:, :, 0] = 0
+            mask[:, :, 2] = 0
+            img = cv.addWeighted(img, 1, mask, 0.2, 0)
+        # cv.imshow('parking space', pk_space)
+        # cv.waitKey(0)
+    print('Free spots: {}'.format(free_spots))
+    cv.imshow('Free spots: {}'.format(free_spots), img)
     cv.waitKey(0)
 
 
