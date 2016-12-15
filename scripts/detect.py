@@ -21,6 +21,7 @@ def masks_from_folder(folder, img_ext='.png'):
               type=click.Path(exists=True),
               required=True)
 @click.option('--threshold',
+              nargs=24,
               type=float,
               required=True)
 def main(filename, background, threshold):
@@ -46,25 +47,19 @@ def main(filename, background, threshold):
         _, mask = cv.threshold(mask, 200, 255, cv.THRESH_BINARY)
         masks.append(mask)
         pk_space = cv.bitwise_and(diff, diff, mask=mask)
-        pk_means = np.mean(pk_space[np.nonzero(pk_space)])
         pk_var.append(np.std(pk_space[np.nonzero(pk_space)]))
-        # cv.imshow('masksss', pk_space)
-        # cv.waitKey(0)
-    var_mean = np.mean(pk_var)
-    var_var = np.std(pk_var)
+
     for i, var in enumerate(pk_var):
-        print(var, var/var_mean, (var-var_mean)/var_var)
-        z_score = (var-var_mean)/var_var
-        if z_score < threshold:
+        if var < threshold[i]:
             free_spots += 1
             mask = cv.cvtColor(masks[i], cv.COLOR_GRAY2RGB)
             mask[:, :, 0] = 0
             mask[:, :, 2] = 0
             img = cv.addWeighted(img, 1, mask, 0.2, 0)
-        # cv.imshow('parking space', pk_space)
-        # cv.waitKey(0)
+
     print('Free spots: {}'.format(free_spots))
     cv.imshow('Free spots: {}'.format(free_spots), img)
+    cv.imwrite('img.png', img)
     cv.waitKey(0)
 
 
