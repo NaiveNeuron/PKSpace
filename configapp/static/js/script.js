@@ -33,7 +33,14 @@ Polygons.prototype.add_point = function(x, y) {
 }
 
 Polygons.prototype.undo = function() {
-    this.current_polygon.pop();
+    if (this.current_polygon.length)
+        this.current_polygon.pop();
+    else if (this.polygons.length) {
+        var tmp = this.polygons.pop();
+        this.current_polygon = tmp[0];
+        this.rotation = tmp[1];
+    }
+
     this.redraw();
 }
 
