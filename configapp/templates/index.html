@@ -20,8 +20,11 @@
 
   <div>
     <button type="button" class="btn btn-save">Save polygon</button>
-    <button type="button" class="btn btn-undo">Undo</button>
+    <button type="button" class="btn btn-undo">Undo</button> 
+    <button type="button" class="btn btn-rotate">Rotate</button>
+    |
     <button type="button" class="btn btn-generate">Generate output</button>
+    
   </div>
 
   <div id="canvas-container">
@@ -65,6 +68,10 @@
 
         $('.btn-choose').click(function() {
             $('#image-previews').slideToggle();
+        });
+
+        $('.btn-rotate').click(function() {
+            polygons.rotate_image();        
         });
 
         $('.btn-generate').click(function() {

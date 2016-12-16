@@ -1,5 +1,8 @@
 function Polygons()
 {
+    this.WIDTH = 640;
+    this.HEIGHT = 480;
+
     this.polygons = [];
     this.current_polygon = [];
     this.rotation = 0;
@@ -9,6 +12,7 @@ function Polygons()
     this.ctx2 = this.canvas2.getContext("2d");
     this.rect = this.canvas.getBoundingClientRect();
     this.image = null;
+    this.rotated = false;
 }
 
 Polygons.prototype.save_polygon = function() {
@@ -38,6 +42,11 @@ Polygons.prototype.set_image = function(image) {
     this.redraw();
 }
 
+Polygons.prototype.rotate_image = function() {
+    this.rotated = !this.rotated;
+    this.redraw();
+}
+
 Polygons.prototype.redraw = function() {
     if (this.image !== null) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -48,7 +57,15 @@ Polygons.prototype.redraw = function() {
 }
 
 Polygons.prototype.draw_image = function() {
-    this.ctx.drawImage(this.image, 0, 0);
+    if (this.rotated) {
+        this.ctx.save();
+        this.ctx.translate(this.WIDTH/2, this.HEIGHT/2);
+        this.ctx.rotate(Math.PI);
+        this.ctx.drawImage(this.image, -this.WIDTH/2, -this.HEIGHT/2);
+        this.ctx.restore();
+    } else {
+        this.ctx.drawImage(this.image, 0, 0);
+    }
 }
 
 Polygons.prototype.draw_polygon = function(polygon, color) {
