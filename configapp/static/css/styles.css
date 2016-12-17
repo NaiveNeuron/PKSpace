@@ -28,6 +28,9 @@ body > div {
 .btn-undo:hover {
     background-color: #FF1504;
 }
+.btn-change.down {
+    background-color: red;
+}
 
 #image-previews {
     max-height: 200px;

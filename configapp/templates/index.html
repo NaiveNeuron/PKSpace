@@ -21,6 +21,8 @@
   <div>
     <button type="button" class="btn btn-save">Save polygon</button>
     <button type="button" class="btn btn-undo">Undo</button> 
+    <button type="button" class="btn btn-change">Drag points</button>
+    |
     <button type="button" class="btn btn-rotate">Rotate</button>
     |
     <button type="button" class="btn btn-generate">Generate output</button>
@@ -51,9 +53,12 @@
     $(document).ready(function () {
         var polygons = new Polygons();
 
-        $('#canvas').click(function(e) {
+        $('#canvas').mousedown(function(e) {
             polygons.add_point(e.pageX, e.pageY);
-            polygons.redraw();
+        }).mouseup(function(e) {
+            polygons.stop_dragging();
+        }).mousemove(function(e) {
+            polygons.move_point(e.pageX, e.pageY);
         });
 
         $('.btn-save').click(function() {
@@ -72,6 +77,11 @@
 
         $('.btn-rotate').click(function() {
             polygons.rotate_image();        
+        });
+
+        $('.btn-change').click(function() {
+            $(this).toggleClass('down');
+            polygons.start_drag_points();
         });
 
         $('.btn-generate').click(function() {
