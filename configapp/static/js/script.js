@@ -4,8 +4,8 @@ function Point(x, y)
     this.y = y;
 }
 
-Point.prototype.dump = function() {
-    return [this.x, this.y];
+Point.prototype.toJSON = function() {
+        return [this.x, this.y];
 }
 
 function Polygons()
@@ -224,6 +224,25 @@ Polygons.prototype.update_rotation = function(degrees) {
     this.draw_mask();
 }
 
+Polygons.prototype.load_polygons = function(str) {
+    try {
+        var obj = JSON.parse(str)['polygons'];
+        var tmp = [];
+        for (var i = 0; i < obj.length; i++) {
+            tmp.push([[]]);
+            for (var j = 0; j < obj[i][0].length; j++) {
+                tmp[i][0].push(new Point(obj[i][0][j][0], obj[i][0][j][1]));
+            }
+            tmp[i].push(obj[i][1]);
+            console.log(tmp);
+        }
+        this.polygons = tmp;
+        this.redraw();
+    } catch(err) {
+        alert('Not a valid json.');
+    }
+}
+
 Polygons.prototype.generate_output = function(selector) {
-    $(selector).val('{' + JSON.stringify(this.polygons) + '}');
+    $(selector).val('{"polygons":' + JSON.stringify(this.polygons) + '}');
 }

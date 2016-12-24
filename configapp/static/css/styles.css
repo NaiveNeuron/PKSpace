@@ -58,7 +58,8 @@ body > div {
 }
 
 #slider-container {
-    text-align: right;
+    /*text-align: right;*/
+    padding-left: 640px;
 }
 #slider {
     width: 40%;

@@ -45,7 +45,8 @@
 
   <div id="output-container">
     <h1>Output</h1>
-    <textarea name="output" rows="20" cols="100" readonly></textarea>
+    <button type="button" class="btn btn-load">Load json</button><br>
+    <textarea name="output" rows="20" cols="100"></textarea>
   </div>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
@@ -86,6 +87,10 @@
 
         $('.btn-generate').click(function() {
             polygons.generate_output('#output-container textarea');
+        });
+
+        $('.btn-load').click(function() {
+            polygons.load_polygons($('#output-container textarea').val());
         });
 
         $('#slider').on('input change', function() {
