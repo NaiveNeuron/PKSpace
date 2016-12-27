@@ -41,6 +41,7 @@ Polygons.prototype.save_polygon = function() {
     this.polygons.push([this.current_polygon, this.rotation]);
     this.current_polygon = [];
     this.rotation = 0;
+    this.set_slider(0);
     this.redraw();
 }
 
@@ -103,9 +104,15 @@ Polygons.prototype.undo = function() {
         var tmp = this.polygons.pop();
         this.current_polygon = tmp[0];
         this.rotation = tmp[1];
+        this.set_slider(this.rotation);
     }
 
     this.redraw();
+}
+
+Polygons.prototype.set_slider = function(val) {
+    $('#slider').val(val);
+    $('#sliderval').val(val);
 }
 
 Polygons.prototype.set_image = function(image) {
