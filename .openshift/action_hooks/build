@@ -1,0 +1,2 @@
+cd ${OPENSHIFT_REPO_DIR}
+pip install -r requirements.txt --no-cache-dir
