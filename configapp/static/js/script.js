@@ -17,10 +17,17 @@ function Polygons()
     this.polygons = [];
     this.current_polygon = [];
     this.rotation = 0;
+
     this.canvas = document.getElementById("canvas");
     this.ctx = this.canvas.getContext("2d");
+    this.ctx.canvas.width = this.WIDTH;
+    this.ctx.canvas.height = this.HEIGHT;
+
     this.canvas2 = document.getElementById("canvas-mask")
     this.ctx2 = this.canvas2.getContext("2d");
+    this.ctx2.canvas.width = this.WIDTH;
+    this.ctx2.canvas.height = this.HEIGHT;
+
     this.rect = this.canvas.getBoundingClientRect();
     this.image = null;
     this.rotated = false;
@@ -241,7 +248,6 @@ Polygons.prototype.load_polygons = function(str) {
                 tmp[i][0].push(new Point(obj[i][0][j][0], obj[i][0][j][1]));
             }
             tmp[i].push(obj[i][1]);
-            console.log(tmp);
         }
         this.polygons = tmp;
         this.redraw();
