@@ -85,7 +85,7 @@ Polygons.prototype.move_point = function(x, y) {
 
 Polygons.prototype.add_point = function(x, y) {
     if (this.image == null) {
-        alert("You have to choose image firstly");
+        alert("You have to choose image first");
         return;
     }
 

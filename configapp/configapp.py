@@ -5,12 +5,14 @@ from flask import Flask, render_template, send_from_directory
 app = Flask(__name__)
 app.config.from_object('configapp.default_settings')
 
+filedir = os.path.dirname(os.path.abspath(__file__))
+directory = os.path.join(filedir, app.config['IMAGE_PATH'])
+
 
 @app.route('/')
 def index():
     files = []
-    listdir = os.path.dirname(os.path.abspath(__file__))
-    listdir = os.listdir(os.path.join(listdir, app.config['IMAGE_PATH']))
+    listdir = os.listdir(directory)
     for f in listdir:
         if f.endswith(app.config['IMAGE_SUFFIX']):
             files.append(f)
@@ -20,8 +22,6 @@ def index():
 
 @app.route('/image/<path:filename>')
 def data_image(filename):
-    directory = os.path.dirname(os.path.abspath(__file__))
-    directory = os.path.join(directory, app.config['IMAGE_PATH'])
     return send_from_directory(directory, filename)
 
 
