@@ -8,6 +8,13 @@ DIR = '%Y-%m-%d'
 FILE = '%H:%M:%S.png'
 
 
+def rotate_image(image, angle):
+    (h, w) = image.shape[:2]
+    center = (w / 2, h / 2)
+    M = cv2.getRotationMatrix2D(center, angle, 1.0)
+    return cv2.warpAffine(image, M, (w, h))
+
+
 def matches(frame, threshold, proportion=3):
     grayimg = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
@@ -27,7 +34,7 @@ def matches(frame, threshold, proportion=3):
 @click.option('--image', default='',
               help='Specify path and get True/False for bright/dark image')
 @click.option('--rotate', default=0,
-              help='Rotate image (1 to rotate or 0 to keep rotation)')
+              help='Rotate image (0 to 360 degrees)')
 def capture_and_save(warmup, threshold, path, image, rotate):
     if image:
         msg = "Matches image {0} with threshold {1}: {2}"
@@ -51,8 +58,8 @@ def capture_and_save(warmup, threshold, path, image, rotate):
         current_date = now.strftime(DIR)
         current_time = now.strftime(FILE)
 
-        if rotate:
-            frame = cv2.flip(frame, -1)
+        if rotate > 0:
+            frame = rotate_image(frame, rotate)
 
         if not os.path.exists(os.path.join(path, current_date)):
             os.makedirs(os.path.join(path, current_date))
