@@ -26,7 +26,9 @@ def matches(frame, threshold, proportion=3):
               help='Path where to save captured images')
 @click.option('--image', default='',
               help='Specify path and get True/False for bright/dark image')
-def capture_and_save(warmup, threshold, path, image):
+@click.option('--rotate', default=0,
+              help='Rotate image (1 to rotate or 0 to keep rotation)')
+def capture_and_save(warmup, threshold, path, image, rotate):
     if image:
         msg = "Matches image {0} with threshold {1}: {2}"
         print(msg.format(image, threshold,
@@ -48,6 +50,9 @@ def capture_and_save(warmup, threshold, path, image):
         now = datetime.datetime.now()
         current_date = now.strftime(DIR)
         current_time = now.strftime(FILE)
+
+        if rotate:
+            frame = cv2.flip(frame, -1)
 
         if not os.path.exists(os.path.join(path, current_date)):
             os.makedirs(os.path.join(path, current_date))
