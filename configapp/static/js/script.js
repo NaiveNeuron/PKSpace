@@ -37,6 +37,14 @@ function Polygons()
     this.drag_point = null;
 }
 
+Polygons.prototype.mouse_x = function(x) {
+    return x-this.rect.left-1;
+}
+
+Polygons.prototype.mouse_y = function(y) {
+    return y-this.rect.top-1;
+}
+
 Polygons.prototype.start_drag_points = function() {
     this.drag_points = !this.drag_points;
     if (this.drag_points)
@@ -62,7 +70,7 @@ Polygons.prototype.get_clicked = function(x, y) {
     for (var i = 0; i < this.polygons.length; i++) {
         var polygon = this.polygons[i][0];
         for (var j = 0; j < polygon.length; j++) {
-            if (this.contains(x-this.rect.left-1, y-this.rect.top-1,
+            if (this.contains(this.mouse_x(x), this.mouse_y(y),
                               polygon[j].x, polygon[j].y))
                 return polygon[j];
         }
@@ -77,8 +85,8 @@ Polygons.prototype.stop_dragging = function() {
 
 Polygons.prototype.move_point = function(x, y) {
     if (this.drag_point != null) {
-        this.drag_point.x = x-this.rect.left-1;
-        this.drag_point.y = y-this.rect.top-1;
+        this.drag_point.x = this.mouse_x(x);
+        this.drag_point.y = this.mouse_y(y);
         this.redraw();
     }
 }
@@ -97,8 +105,18 @@ Polygons.prototype.add_point = function(x, y) {
         else
             this.drag_point = null;
     } else {
-        /* -1 because of 1px border around canvas */
-        var point = new Point(x-this.rect.left-1, y-this.rect.top-1);
+        /* check for dragging current polygon point */
+        for (var i = 0; i < this.current_polygon.length; i++) {
+            if (this.contains(this.mouse_x(x), this.mouse_y(y),
+                              this.current_polygon[i].x,
+                              this.current_polygon[i].y)) {
+                this.drag_point = this.current_polygon[i];
+                this.dragging = true;
+                return;
+            }
+        }
+
+        var point = new Point(this.mouse_x(x), this.mouse_y(y));
         this.current_polygon.push(point)
     }
     this.redraw();
