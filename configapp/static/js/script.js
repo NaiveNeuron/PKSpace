@@ -42,6 +42,8 @@ Polygons.prototype.mouse_x = function(x) {
 }
 
 Polygons.prototype.mouse_y = function(y) {
+    this.rect = this.canvas.getBoundingClientRect();
+   
     return y-this.rect.top-1;
 }
 
@@ -243,10 +245,18 @@ Polygons.prototype.draw_mask = function() {
             this.ctx2.lineTo(moved[0], moved[1]);
         }
         this.ctx2.closePath();
-        this.ctx2.clip();
+        this.ctx2.clip(); 
+
         this.ctx2.translate(centerx, centery);
         this.ctx2.rotate(this.rotation * Math.PI / 180);
-        this.ctx2.drawImage(this.image, -centerx, -centery);
+        this.ctx2.translate(-centerx, -centery);
+
+        if (this.rotated) {
+            this.ctx2.translate(this.WIDTH, this.HEIGHT);
+            this.ctx2.rotate(Math.PI);
+        }
+        this.ctx2.drawImage(this.image, 0, 0);
+
         this.ctx2.restore();
     }
 }
