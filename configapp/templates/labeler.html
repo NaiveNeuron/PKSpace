@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PKSpace labeler app</title>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+  {% if nojson %}
+  <div id="labeler-header">
+    <h1>No json file with polygons found</h1>
+    <h3>Please <a href="{{ url_for('marker') }}">generate</a> one</h3>
+  </div>
+
+  {% else %}
+  <div id="labeler-header">
+    <h1>Click on parking lots where you see a car</h1>
+    <p>JSON output will be automatically saved into folder where the image
+       was loaded from</p>
+  </div>
+
+  <div id="labeler-container">
+    <canvas id="labcanvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/labeler.js') }}"></script>
+  <script>
+    $(document).ready(function () {
+        var images = [];
+
+        {% for photo in imgs %}
+            images.push("{{ url_for('dataset_image', img=photo) }}");
+        {% endfor %}
+        console.log(images);
+    });
+  </script>
+  {% endif %}
+
+</body>
+</html>

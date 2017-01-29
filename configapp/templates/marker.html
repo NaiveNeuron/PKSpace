@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PKSpace config app</title>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+  <div>
+    <button class="btn btn-choose">Choose image &#x25BC;</button>
+    <div id="image-previews">
+      {% for image in images %}
+        <img src="{{ url_for('data_image', filename=image) }}" width="128" height="96">
+      {% endfor %}
+    </div>
+  </div>
+
+  <div>
+    <button type="button" class="btn btn-save">Save polygon</button>
+    <button type="button" class="btn btn-undo">Undo</button> 
+    <button type="button" class="btn btn-change">Drag points</button>
+    |
+    <button type="button" class="btn btn-rotate">Rotate</button>
+    |
+    <button type="button" class="btn btn-generate">Generate output</button>
+    
+  </div>
+
+  <div id="canvas-container">
+    <div id="slider-container">
+      <input id="slider" type="range" name="slider" min="0" max="360"
+        value="0" step="0.05">
+      <input id="sliderval" type="text" name="sliderval" value="0">
+    </div>
+    <canvas id="canvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    <canvas id="canvas-mask" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+
+  <div id="output-container">
+    <h1>Output</h1>
+    <button type="button" class="btn btn-load">Load json</button><br>
+    <form method="POST">
+      <textarea name="output" rows="20" cols="100"></textarea>
+      <button type="submit" name="send_to_labeler" class="btn">Save config</button>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+    $(document).ready(function () {
+        var polygons = new Polygons();
+
+        $('#canvas').mousedown(function(e) {
+            polygons.add_point(e.pageX, e.pageY);
+        }).mouseup(function(e) {
+            polygons.stop_dragging();
+        }).mousemove(function(e) {
+            polygons.move_point(e.pageX, e.pageY);
+        });
+
+        $('.btn-save').click(function() {
+            polygons.save_polygon();
+        });
+
+        $('.btn-undo').click(function() {
+            polygons.undo();
+        });
+
+        $('.btn-choose').click(function() {
+            $('#image-previews').slideToggle();
+        });
+
+        $('.btn-rotate').click(function() {
+            polygons.rotate_image();        
+        });
+
+        $('.btn-change').click(function() {
+            $(this).toggleClass('down');
+            polygons.start_drag_points();
+        });
+
+        $('.btn-generate').click(function() {
+            polygons.generate_output('#output-container textarea');
+        });
+
+        $('.btn-load').click(function() {
+            polygons.load_polygons($('#output-container textarea').val());
+        });
+
+        $('#slider').on('input change', function() {
+            var val = $(this).val();
+            $('#sliderval').val(val);
+            polygons.update_rotation(parseFloat(val));   
+        });
+
+        $('#image-previews img').click(function() {
+            $('#image-previews img').css('border-color', '#ffffff');
+
+            $(this).css('border-color', '#4A42DE');
+
+            polygons.set_image(this);
+        });
+    });
+  </script>
+</body>
+</html>
