@@ -3,9 +3,12 @@
 <head>
     <title>PKSpace labeler app</title>
     <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
 
     <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='css/styles.css') }}">
+        href="{{ url_for('static', filename='css/jquery-ui.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='css/labeler.css') }}">
 </head>
 
 <body>
@@ -16,10 +19,28 @@
   </div>
 
   {% else %}
+  <div id="tabs">
+    <ul>
+    {% for tab in tabs %}
+      <li><a href="#{{ tab }}">{{ tab }}</a></li>
+    {% endfor %}
+    </ul>
+
+    {% for subdir, images in imgs.iteritems() %}
+      <div id="{{ subdir }}">
+        {% for img in images %}
+        <span id="{{ img.src }}" {% if img.labeled %}class="green"{% endif %}>
+          {{ img.src }}
+        </span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
   <div id="labeler-header">
-    <h1>Click on parking lots where you see a car</h1>
     <p>JSON output will be automatically saved into folder where the image
        was loaded from</p>
+    <button id="savelabel">Save labeled image</button>
   </div>
 
   <div id="labeler-container">
@@ -30,13 +51,27 @@
 
   <script src="{{ url_for('static', filename='js/labeler.js') }}"></script>
   <script>
+    
     $(document).ready(function () {
-        var images = [];
+        $('#tabs').tabs();
+        
+        var labeler = new Labeler();
+        labeler.load_polygons('{{ polygons }}');
 
-        {% for photo in imgs %}
-            images.push("{{ url_for('dataset_image', img=photo) }}");
-        {% endfor %}
-        console.log(images);
+
+        $('#tabs > div > span').click(function(e) {
+            labeler.change_image($(this).attr('id'));
+        });
+
+        $('#labcanvas').click(function(e){
+            if (labeler.image != null) {
+                labeler.clicked(e.pageX, e.pageY);
+            }
+        });
+
+        $('#savelabel').click(function(e) {
+            labeler.save();
+        });
     });
   </script>
   {% endif %}

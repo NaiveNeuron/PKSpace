@@ -2,7 +2,7 @@ import os
 import json
 
 from flask import (Flask, render_template, send_from_directory, request,
-                   redirect, url_for)
+                   redirect, url_for, jsonify)
 
 app = Flask(__name__)
 app.config.from_object('configapp.default_settings')
@@ -39,23 +39,46 @@ def marker():
 def labeler():
     try:
         with open(os.path.join(filedir, 'polygons.json')) as f:
-            data = json.load(f)
-        polygons = data['polygons']
+            polygons = json.load(f)['polygons']
     except IOError:
         return render_template('labeler.html', nojson=True)
 
-    data = []
+    data = {}
     # we assume that directory walked contains DATE/TIME.png files
     # othewise it may crash -- needs some testing
     subdirs = [d for d in os.listdir(dataset_dir)
                     if os.path.isdir(os.path.join(dataset_dir, d))]
             
     for subdir in subdirs:
+        data[subdir] = []
         for f in os.listdir(os.path.join(dataset_dir, subdir)):
-            if f.endswith(app.config['IMAGE_SUFFIX']):
-                data.append(os.path.join(subdir, f))
+            img = os.path.join(subdir, f)
+            js = os.path.join(dataset_dir,
+                              img[:-len(app.config['IMAGE_SUFFIX'])+1]+'json')
+            
+            labeled = False
+            if os.path.isfile(js):
+                labeled = True
 
-    return render_template('labeler.html', imgs=data)
+            if f.endswith(app.config['IMAGE_SUFFIX']):
+
+                data[subdir].append({'src': os.path.join(subdir, f),
+                                     'labeled': labeled})
+
+    return render_template('labeler.html', imgs=data, tabs=subdirs,
+                            polygons=polygons)
+
+
+@app.route('/savelabel/<path:filename>', methods=['GET', 'POST'])
+def savelabel(filename):
+    if request.method == 'POST':
+        js = os.path.join(dataset_dir,
+                          filename[:-len(app.config['IMAGE_SUFFIX'])+1]+'json')
+
+        # print(filename, request.json['labeled'])
+        with open(js, 'w+') as f:
+            f.write(json.dumps(request.json['labeled']))
+        return jsonify(result='OK', imgid=filename)
 
 
 @app.route('/image/<path:filename>')

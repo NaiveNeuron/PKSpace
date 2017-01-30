@@ -68,13 +68,3 @@ body > div {
     width: 60px;
     margin-right: 5%;
 }
-
-
-/* labeler */
-#labeler-header, #labeler-container {
-    text-align: center;
-}
-#labcanvas {
-    border: 1px solid #ccc;
-}
-
