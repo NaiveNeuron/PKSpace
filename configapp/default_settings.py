@@ -8,4 +8,4 @@ IP = os.environ.get('OPENSHIFT_PYTHON_IP','127.0.0.1')
 PORT = int(os.environ.get('OPENSHIFT_PYTHON_PORT',8080))
 IMAGE_PATH = 'test_images/'
 IMAGE_SUFFIX = '.png'
-DATASET_PATH = '../../data'
+DATASET_PATH = '../../test_data'
