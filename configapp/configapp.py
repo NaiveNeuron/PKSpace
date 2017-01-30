@@ -17,6 +17,10 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/live')
+def live():
+    return render_template('live.html')
+
 @app.route('/marker', methods=['GET', 'POST'])
 def marker():
     if request.method == 'POST':
