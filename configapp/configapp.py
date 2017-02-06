@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 
 from flask import (Flask, render_template, send_from_directory, request,
                    redirect, url_for, jsonify)
@@ -10,6 +11,7 @@ app.config.from_object('configapp.default_settings')
 filedir = os.path.dirname(os.path.abspath(__file__))
 directory = os.path.join(filedir, app.config['IMAGE_PATH'])
 dataset_dir = os.path.join(filedir, app.config['DATASET_PATH'])
+mask_dir = os.path.join(filedir, app.config['MASK_PATH'])
 
 
 @app.route('/')
@@ -26,7 +28,12 @@ def marker():
     if request.method == 'POST':
         if 'output' in request.form:
             polygons = request.form.get('output')
-            with open(os.path.join(filedir, 'polygons.json'), 'w+') as f:
+            filename = request.form.get('filename')
+            if filename == '':
+                filename = str(datetime.datetime.now()).replace(' ', '_')
+
+            filename += '.json'
+            with open(os.path.join(mask_dir, filename), 'w+') as f:
                 f.write(polygons)
             return redirect(url_for('labeler'))
 

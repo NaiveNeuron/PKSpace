@@ -9,3 +9,4 @@ PORT = int(os.environ.get('OPENSHIFT_PYTHON_PORT',8080))
 IMAGE_PATH = 'test_images/'
 IMAGE_SUFFIX = '.png'
 DATASET_PATH = '../../test_data'
+MASK_PATH = '../../masks'
