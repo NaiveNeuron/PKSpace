@@ -4,11 +4,6 @@ import click
 import numpy as np
 
 
-def preprocess(img):
-    img_eq = exposure.equalize_hist(img)
-    return img_eq
-
-
 @click.command()
 @click.option('--filename',
               type=click.Path(exists=True),
