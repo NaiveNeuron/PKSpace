@@ -21,26 +21,33 @@ class PKspaceLoader(Loader):
             angle = space.get('rotation')
             nove_pole = np.hstack(
                 (np.asarray(points), np.ones((len(points), 1))))
+
             center = np.mean(nove_pole, 0)[:2]
+            center = (center[0],center[1])
             rows, cols, tmp = src.shape
 
-            min_x, min_y = rows, cols
+            min_x, min_y = cols, rows
             max_x, max_y = 0, 0
             rad = np.math.radians(angle)
             for x, y in points:
-                x_rotated = ((x - center[0]) * np.cos(rad)) \
-                            - ((y - center[1]) * np.sin(rad)) + center[0]
-                y_rotated = ((x - center[0]) * np.sin(rad)) \
-                            + ((y - center[1]) * np.cos(rad)) + center[1]
-                min_x, min_y = max(min(min_x, int(x_rotated)), 0), \
-                               max(min(min_y, int(y_rotated)), 0)
-                max_x, max_y = max(max_x, int(x_rotated)), \
-                               max(max_y, int(y_rotated))
+                dx = (x - center[0])
+                dy = (y - center[1])
+                a = center[0]
+                b = center[1]
+                cos = np.cos(rad)
+                sin = np.sin(rad)
+
+                x_rotated = (dx * cos) - (dy * sin) + a
+                y_rotated = (dx * sin) + (dy * cos) + b
+                min_x = max(min(min_x, int(x_rotated)), 0)
+                min_y = max(min(min_y, int(y_rotated)), 0)
+                max_x = min(max(max_x, int(x_rotated)), cols)
+                max_y = min(max(max_y, int(y_rotated)), rows)
 
             m = cv2.getRotationMatrix2D(center, -angle, 1)
             # nove_pole = m.dot(nove_pole.T).T
-            # nove_pole[:, 0] = np.clip(nove_pole[:, 0], 0, rows)
-            # nove_pole[:, 1] = np.clip(nove_pole[:, 1], 0, cols)
+            # nove_pole[:, 0] = np.clip(nove_pole[:, 0], 0, cols)
+            # nove_pole[:, 1] = np.clip(nove_pole[:, 1], 0, rows)
             # nove_pole = nove_pole.astype('uint8')
             # minima = nove_pole.min(axis=0)
             # maxima = nove_pole.max(axis=0)
@@ -61,9 +68,8 @@ class PKspaceLoader(Loader):
         extension = "*{}".format(extension)
         for file in glob.glob(os.path.join(path, extension)):
             img = cv2.imread(file)
-            with open("{}.json".format(os.path.splitext(file)[0])) \
-                    as data_file:
-                desc = json.load(data_file)
+            jsonfile = open("{}.json".format(os.path.splitext(file)[0]))
+            desc = json.load(jsonfile)
             spaces, answers = self.__get_spaces__(img, desc)
             all_parking_spaces.append(spaces)
             all_answers.append(answers)
