@@ -23,7 +23,7 @@ class PKspaceLoader(Loader):
                 (np.asarray(points), np.ones((len(points), 1))))
 
             center = np.mean(nove_pole, 0)[:2]
-            center = (center[0],center[1])
+            center = (center[0], center[1])
             rows, cols, tmp = src.shape
 
             min_x, min_y = cols, rows
