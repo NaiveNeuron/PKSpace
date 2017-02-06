@@ -69,7 +69,7 @@ class PKspaceLoader(Loader):
             all_answers.append(answers)
         all_parking_spaces = np.asarray(all_parking_spaces)
         all_answers = np.asarray(all_answers)
-        assert split < 1, print('split needs to be smaller than 1')
+        assert (split < 1, print('split needs to be smaller than 1'))
         train_size = int(np.ceil(len(all_parking_spaces) * split))
         indices = np.random.permutation(len(all_parking_spaces))
         x_train = all_parking_spaces[indices[:train_size]]
