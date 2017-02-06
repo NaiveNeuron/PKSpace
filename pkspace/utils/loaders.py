@@ -29,13 +29,13 @@ class PKspaceLoader(Loader):
             rad = np.math.radians(angle)
             for x, y in points:
                 x_rotated = ((x - center[0]) * np.cos(rad)) \
-                    - ((y - center[1]) * np.sin(rad)) + center[0]
+                            - ((y - center[1]) * np.sin(rad)) + center[0]
                 y_rotated = ((x - center[0]) * np.sin(rad)) \
-                    + ((y - center[1]) * np.cos(rad)) + center[1]
+                            + ((y - center[1]) * np.cos(rad)) + center[1]
                 min_x, min_y = max(min(min_x, int(x_rotated)), 0), \
-                    max(min(min_y, int(y_rotated)), 0)
+                               max(min(min_y, int(y_rotated)), 0)
                 max_x, max_y = max(max_x, int(x_rotated)), \
-                    max(max_y, int(y_rotated))
+                               max(max_y, int(y_rotated))
 
             m = cv2.getRotationMatrix2D(center, -angle, 1)
             # nove_pole = m.dot(nove_pole.T).T
@@ -69,7 +69,7 @@ class PKspaceLoader(Loader):
             all_answers.append(answers)
         all_parking_spaces = np.asarray(all_parking_spaces)
         all_answers = np.asarray(all_answers)
-        assert (split < 1, print('split needs to be smaller than 1'))
+        assert split < 1, 'split needs to be smaller than 1'
         train_size = int(np.ceil(len(all_parking_spaces) * split))
         indices = np.random.permutation(len(all_parking_spaces))
         x_train = all_parking_spaces[indices[:train_size]]
@@ -91,8 +91,8 @@ class PKlotLoader(Loader):
             rows, cols, tmp = src.shape
             dst = cv2.warpAffine(src, m, (cols, rows))
             roi = dst[
-                  int(center[1] - h / 2):int(center[1] + h / 2),
-                  int(center[0] - w / 2):int(center[0] + w / 2)]
+                int(center[1] - h / 2):int(center[1] + h / 2),
+                int(center[0] - w / 2):int(center[0] + w / 2)]
             fin = cv2.resize(roi, fin_size).flatten()
             answers.append(space.get('occupied', 1))
             spaces.append(fin)
@@ -112,7 +112,7 @@ class PKlotLoader(Loader):
             all_answers.append(answers)
         all_parking_spaces = np.asarray(all_parking_spaces)
         all_answers = np.asarray(all_answers)
-        assert split < 1, print('split needs to be smaller than 1')
+        assert split < 1, 'split needs to be smaller than 1'
         train_size = int(np.ceil(len(all_parking_spaces) * split))
         indices = np.random.permutation(len(all_parking_spaces))
         x_train = all_parking_spaces[indices[:train_size]]
