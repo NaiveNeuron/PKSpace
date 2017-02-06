@@ -1,10 +1,11 @@
 #!/usr/bin/python
 import os
+from configapp.configapp import app as application
 
-virtenv = os.path.join(os.environ.get('OPENSHIFT_PYTHON_DIR','.'), 'virtenv')
+virtenv = os.path.join(os.environ.get('OPENSHIFT_PYTHON_DIR', '.'), 'virtenv')
 virtualenv = os.path.join(virtenv, 'bin/activate_this.py')
 try:
-    execfile(virtualenv, dict(__file__=virtualenv))
+    execfile(virtualenv, dict(__file__=virtualenv))  # noqa
 except IOError:
     pass
 #
@@ -12,7 +13,6 @@ except IOError:
 # line, it's possible required libraries won't be in your searchable path
 #
 
-from configapp.configapp import app as application
 
 #
 # Below for testing only
