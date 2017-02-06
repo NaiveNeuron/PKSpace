@@ -158,14 +158,14 @@ Labeler.prototype.save = function(saveurl) {
 
 Labeler.prototype.set_occupancy_of_all = function(occupancy) {
     for (var i = 0; i < this.polygons.length; i++) {
-      this.occupies[i] = occupancy;
+        this.occupies[i] = occupancy;
     }
     this.redraw();
 }
 
 Labeler.prototype.reverse_occupancy_of_all = function(occupancy) {
     for (var i = 0; i < this.polygons.length; i++) {
-      this.occupies[i] = !this.occupies[i];
+        this.occupies[i] = !this.occupies[i];
     }
     this.redraw();
 }
