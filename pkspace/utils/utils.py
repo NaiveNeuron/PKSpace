@@ -17,4 +17,4 @@ def visual(x_train, y_train):
 
 if __name__ == '__main__':
     loader = loaders.PKspaceLoader()
-    a, b, c, d = load_dataset(loader, 'C:\\Users\\rstev\\PycharmProjects\\Rocnikovy\\labeled_data\\2017-01-10', 0.2)
+    a, b, c, d = load_dataset(loader, 'labeled_data/2017-01-10', 0.2)
