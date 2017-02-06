@@ -5,3 +5,9 @@ install:
   - pip install flake8 --use-mirrors
 script:
   - flake8 --ignore=E731,E226 .
+notifications:
+  irc:
+    channels:
+      - "chat.freenode.net#naiveneuron"
+    on_success: change # default: always
+    on_failure: always # default: always
