@@ -21,40 +21,17 @@ class PKspaceLoader(Loader):
             angle = space.get('rotation')
             nove_pole = np.hstack(
                 (np.asarray(points), np.ones((len(points), 1))))
-
             center = np.mean(nove_pole, 0)[:2]
             center = (center[0], center[1])
             rows, cols, tmp = src.shape
-
-            min_x, min_y = cols, rows
-            max_x, max_y = 0, 0
-            rad = np.math.radians(angle)
-            for x, y in points:
-                dx = (x - center[0])
-                dy = (y - center[1])
-                a = center[0]
-                b = center[1]
-                cos = np.cos(rad)
-                sin = np.sin(rad)
-
-                x_rotated = (dx * cos) - (dy * sin) + a
-                y_rotated = (dx * sin) + (dy * cos) + b
-                min_x = max(min(min_x, int(x_rotated)), 0)
-                min_y = max(min(min_y, int(y_rotated)), 0)
-                max_x = min(max(max_x, int(x_rotated)), cols)
-                max_y = min(max(max_y, int(y_rotated)), rows)
-
             m = cv2.getRotationMatrix2D(center, -angle, 1)
-            # nove_pole = m.dot(nove_pole.T).T
-            # nove_pole[:, 0] = np.clip(nove_pole[:, 0], 0, cols)
-            # nove_pole[:, 1] = np.clip(nove_pole[:, 1], 0, rows)
-            # nove_pole = nove_pole.astype('uint8')
-            # minima = nove_pole.min(axis=0)
-            # maxima = nove_pole.max(axis=0)
-            # print(nove_pole)
-            # min_x, min_y = minima[:2]
-            # max_x, max_y = maxima[:2]
-
+            nove_pole = m.dot(nove_pole.T).T
+            nove_pole[:, 0] = np.clip(nove_pole[:, 0], 0, cols)
+            nove_pole[:, 1] = np.clip(nove_pole[:, 1], 0, rows)
+            minima = nove_pole.min(axis=0)
+            maxima = nove_pole.max(axis=0)
+            min_x, min_y = int(minima[0]), int(minima[1])
+            max_x, max_y = int(maxima[0]), int(maxima[1])
             rotated = cv2.warpAffine(src, m, (cols, rows))
             roi = rotated[min_y:max_y, min_x:max_x]
             fin = cv2.resize(roi, finsize).flatten()
