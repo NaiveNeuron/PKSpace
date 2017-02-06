@@ -23,7 +23,7 @@ Labeler.prototype.mouse_y = function(y) {
     return Math.round(y-this.rect.top-1);
 }
 
-Labeler.prototype.change_image = function(src) { 
+Labeler.prototype.change_image = function(src) {
     this.image = document.createElement("IMG");
     this.image.src = '/datasetimg/' + src;
 
@@ -32,7 +32,7 @@ Labeler.prototype.change_image = function(src) {
     this.image = new Image();
     this.image.src = '/datasetimg/' + src;
     var _this = this;
-    this.image.onload = function() { 
+    this.image.onload = function() {
         _this.redraw();
     };
 }
@@ -40,7 +40,7 @@ Labeler.prototype.change_image = function(src) {
 Labeler.prototype.is_inside = function(vs, x, y) {
     // ray-casting algorithm based on
     // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-    
+
     var inside = false;
     for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
         var xi = vs[i].x, yi = vs[i].y;
@@ -138,9 +138,9 @@ Labeler.prototype.save = function(saveurl) {
         spot['points'] = points;
         imagejson['spots'].push(spot);
     }
-    
+
     var toSend = {labeled: imagejson};
-    
+
     $.ajax({
         url: '/savelabel/' + this.src,
         type: 'POST',
@@ -154,4 +154,18 @@ Labeler.prototype.save = function(saveurl) {
             }
         }
     });
+}
+
+Labeler.prototype.set_occupancy_of_all = function(occupancy) {
+    for (var i = 0; i < this.polygons.length; i++) {
+      this.occupies[i] = occupancy;
+    }
+    this.redraw();
+}
+
+Labeler.prototype.reverse_occupancy_of_all = function(occupancy) {
+    for (var i = 0; i < this.polygons.length; i++) {
+      this.occupies[i] = !this.occupies[i];
+    }
+    this.redraw();
 }

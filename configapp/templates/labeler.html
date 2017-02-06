@@ -41,6 +41,9 @@
     <p>JSON output will be automatically saved into folder where the image
        was loaded from</p>
     <button id="savelabel">Save labeled image</button>
+    <button id="markall-occupied">Mark all occupied</button>
+    <button id="markall-vacant">Mark all vacant</button>
+    <button id="markall-reverse">Reverse all markings</button>
   </div>
 
   <div id="labeler-container">
@@ -51,10 +54,10 @@
 
   <script src="{{ url_for('static', filename='js/labeler.js') }}"></script>
   <script>
-    
+
     $(document).ready(function () {
         $('#tabs').tabs();
-        
+
         var labeler = new Labeler();
         labeler.load_polygons('{{ polygons }}');
 
@@ -71,6 +74,18 @@
 
         $('#savelabel').click(function(e) {
             labeler.save();
+        });
+
+        $('#markall-vacant').click(function(e){
+            labeler.set_occupancy_of_all(0);
+        });
+
+        $('#markall-occupied').click(function(e){
+            labeler.set_occupancy_of_all(1);
+        });
+
+        $('#markall-reverse').click(function(e){
+            labeler.reverse_occupancy_of_all();
         });
     });
   </script>
