@@ -47,6 +47,13 @@
   </div>
 
   <div id="labeler-container">
+    <div id="masks">
+      <h4>Choose a mask</h4>
+      {% for mask in masks %}
+        <div class="mask" data-key="{{ mask }}">{{ mask }}</div>
+      {% endfor %}
+    </div>
+
     <canvas id="labcanvas" width="640" height="480">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
@@ -59,11 +66,14 @@
         $('#tabs').tabs();
 
         var labeler = new Labeler();
-        labeler.load_polygons('{{ polygons }}');
-
 
         $('#tabs > div > span').click(function(e) {
             labeler.change_image($(this).attr('id'));
+        });
+
+        $('#masks .mask').click(function(e) {
+            $('#masks .mask').css('border-color', '#ccc');
+            labeler.change_mask($(this));
         });
 
         $('#labcanvas').click(function(e){

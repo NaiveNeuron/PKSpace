@@ -105,9 +105,8 @@ Labeler.prototype.redraw = function() {
     }
 }
 
-Labeler.prototype.load_polygons = function(str) {
+Labeler.prototype.load_polygons = function(obj) {
     try {
-        var obj = JSON.parse(str);
         var tmp = [];
         for (var i = 0; i < obj.length; i++) {
             tmp.push([[]]);
@@ -149,8 +148,28 @@ Labeler.prototype.save = function(saveurl) {
 
         success: function(response) {
             if (response.result == 'OK') {
-                var imgid = "#" + response.imgid.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+                var imgid = "#" +
+                    response.imgid.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
                 $(imgid).addClass('green');
+            }
+        }
+    });
+}
+
+Labeler.prototype.change_mask = function(selector) {
+    var name = selector.attr('data-key');
+    var _this = this;
+    $.ajax({
+        url: '/marker/mask/' + name,
+        type: 'GET',
+        contentType: 'application/json',
+        
+        success: function(response) {
+            if (response.result == 'OK') {
+                selector.css('border-color', 'blue');
+                _this.load_polygons(response.polygons);
+            } else {
+                alert('FAILED TO LOAD MASK');
             }
         }
     });

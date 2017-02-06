@@ -22,3 +22,16 @@
     border: 1px solid #ccc;
     cursor: pointer;
 }
+
+#masks {
+    width: 300px;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    float: left;
+}
+
+#masks .mask {
+    padding: 20px;
+    border: 2px solid #ccc;
+    cursor: pointer;
+}

@@ -23,6 +23,17 @@ def index():
 def live():
     return render_template('live.html')
 
+
+@app.route('/marker/mask/<path:filename>')
+def get_mask(filename):
+    mask = os.path.join(mask_dir, filename)
+    if os.path.isfile(mask):
+        with open(mask) as f:
+            polygons = json.load(f)['polygons']
+        return jsonify(result='OK', polygons=polygons)
+    return jsonify(result='FAIL')
+
+
 @app.route('/marker', methods=['GET', 'POST'])
 def marker():
     if request.method == 'POST':
@@ -30,7 +41,7 @@ def marker():
             polygons = request.form.get('output')
             filename = request.form.get('filename')
             if filename == '':
-                filename = str(datetime.datetime.now()).replace(' ', '_')
+                filename = str(datetime.datetime.now())
 
             filename += '.json'
             with open(os.path.join(mask_dir, filename), 'w+') as f:
@@ -48,10 +59,12 @@ def marker():
 
 @app.route('/labeler', methods=['GET', 'POST'])
 def labeler():
-    try:
-        with open(os.path.join(filedir, 'polygons.json')) as f:
-            polygons = json.load(f)['polygons']
-    except IOError:
+    masks = []
+    for f in os.listdir(mask_dir):
+        if f.endswith('.json'):
+            masks.append(f)
+
+    if not masks:
         return render_template('labeler.html', nojson=True)
 
     data = {}
@@ -77,7 +90,7 @@ def labeler():
                                      'labeled': labeled})
 
     return render_template('labeler.html', imgs=data, tabs=subdirs,
-                            polygons=polygons)
+                           masks=masks)
 
 
 @app.route('/savelabel/<path:filename>', methods=['GET', 'POST'])
@@ -86,7 +99,6 @@ def savelabel(filename):
         js = os.path.join(dataset_dir,
                           filename[:-len(app.config['IMAGE_SUFFIX'])+1]+'json')
 
-        # print(filename, request.json['labeled'])
         with open(js, 'w+') as f:
             f.write(json.dumps(request.json['labeled']))
         return jsonify(result='OK', imgid=filename)
