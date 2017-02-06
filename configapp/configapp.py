@@ -75,7 +75,7 @@ def labeler():
             
     for subdir in subdirs:
         data[subdir] = []
-        for f in os.listdir(os.path.join(dataset_dir, subdir)):
+        for f in sorted(os.listdir(os.path.join(dataset_dir, subdir))):
             img = os.path.join(subdir, f)
             js = os.path.join(dataset_dir,
                               img[:-len(app.config['IMAGE_SUFFIX'])+1]+'json')
