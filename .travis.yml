@@ -11,3 +11,4 @@ notifications:
       - "chat.freenode.net#naiveneuron"
     on_success: change # default: always
     on_failure: always # default: always
+    use_notice: true
