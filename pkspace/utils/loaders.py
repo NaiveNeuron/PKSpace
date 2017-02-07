@@ -26,6 +26,7 @@ class PKSpaceLoader(Loader):
             m = cv2.getRotationMatrix2D(center, -angle, 1)
             rotated = cv2.warpAffine(src, m, (cols, rows))
 
+            # rotating points and searching for minimal bounding rectangle
             points = m.dot(points.T).T
             points[:, 0] = np.clip(points[:, 0], 0, cols)
             points[:, 1] = np.clip(points[:, 1], 0, rows)
@@ -50,21 +51,31 @@ class PKSpaceLoader(Loader):
             spaces, answers = self._get_spaces(img, desc, size)
             all_spaces.append(spaces)
             all_answers.append(answers)
-
         all_spaces = np.asarray(all_spaces)
         all_answers = np.asarray(all_answers)
         all_spaces = all_spaces.reshape(-1, all_spaces.shape[-1])
         all_answers = all_answers.reshape(-1)
 
+        """"
         assert split < 1, 'split needs to be smaller than 1'
 
         train_size = int(np.ceil(len(all_spaces) * split))
         indices = np.random.permutation(len(all_spaces))
-        x_train = all_spaces[indices[:train_size]]
-        y_train = all_answers[indices[:train_size]]
-        x_test = all_spaces[indices[:-train_size]]
-        y_test = all_answers[indices[:-train_size]]
+
+        # dividing days into training and testing sets
+        x_train_days = all_spaces[indices[:train_size]]
+        y_train_days = all_answers[indices[:train_size]]
+        x_test_days = all_spaces[indices[:-train_size]]
+        y_test_days = all_answers[indices[:-train_size]]
+
+        # reshaping them into 2D
+        x_train = x_train_days.reshape(-1, x_train_days.shape[-1])
+        y_train = y_train_days.reshape(-1)
+        x_test = x_test_days.reshape(-1, x_test_days.shape[-1])
+        y_test = y_test_days.reshape(-1)
         return x_train, x_test, y_train, y_test
+        """
+        return all_spaces, all_answers
 
 
 class PKLotLoader(Loader):
@@ -102,19 +113,26 @@ class PKLotLoader(Loader):
             all_answers.append(answers)
         all_spaces = np.asarray(all_spaces)
         all_answers = np.asarray(all_answers)
+        all_spaces = all_spaces.reshape(-1, all_spaces.shape[-1])
+        all_answers = all_answers.reshape(-1)
 
+        """"
         assert split < 1, 'split needs to be smaller than 1'
 
         train_size = int(np.ceil(len(all_spaces) * split))
         indices = np.random.permutation(len(all_spaces))
 
+        # dividing days into training and testing sets
         x_train_days = all_spaces[indices[:train_size]]
         y_train_days = all_answers[indices[:train_size]]
         x_test_days = all_spaces[indices[:-train_size]]
         y_test_days = all_answers[indices[:-train_size]]
 
+        # reshaping them into 2D
         x_train = x_train_days.reshape(-1, x_train_days.shape[-1])
         y_train = y_train_days.reshape(-1)
         x_test = x_test_days.reshape(-1, x_test_days.shape[-1])
         y_test = y_test_days.reshape(-1)
         return x_train, x_test, y_train, y_test
+        """
+        return all_spaces, all_answers
