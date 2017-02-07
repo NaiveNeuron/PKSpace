@@ -57,6 +57,7 @@ class PKSpaceLoader(Loader):
         all_answers = all_answers.reshape(-1)
 
         assert split < 1, 'split needs to be smaller than 1'
+
         train_size = int(np.ceil(len(all_spaces) * split))
         indices = np.random.permutation(len(all_spaces))
         x_train = all_spaces[indices[:train_size]]
@@ -74,12 +75,14 @@ class PKLotLoader(Loader):
             center = int(space[0][0]['x']), int(space[0][0]['y'])
             h, w = int(space[0][1]['h']), int(space[0][1]['w'])
             angle = float(space[0][2].get('d', 0))
+
             m = cv2.getRotationMatrix2D(center, angle, 1)
             rows, cols, _ = src.shape
-            dst = cv2.warpAffine(src, m, (cols, rows))
-            roi = dst[
-                  int(center[1] - h / 2):int(center[1] + h / 2),
-                  int(center[0] - w / 2):int(center[0] + w / 2)]
+            rotated = cv2.warpAffine(src, m, (cols, rows))
+
+            min_x, max_x = int(center[0] - w / 2), int(center[0] + w / 2)
+            min_y, max_y = int(center[1] - h / 2), int(center[1] + h / 2)
+            roi = rotated[min_y:max_y, min_x, max_x]
             fin = cv2.resize(roi, fin_size).flatten()
             answers.append(space.get('occupied', 1))
             spaces.append(fin)
@@ -99,13 +102,17 @@ class PKLotLoader(Loader):
             all_answers.append(answers)
         all_spaces = np.asarray(all_spaces)
         all_answers = np.asarray(all_answers)
+
         assert split < 1, 'split needs to be smaller than 1'
+
         train_size = int(np.ceil(len(all_spaces) * split))
         indices = np.random.permutation(len(all_spaces))
+
         x_train_days = all_spaces[indices[:train_size]]
         y_train_days = all_answers[indices[:train_size]]
         x_test_days = all_spaces[indices[:-train_size]]
         y_test_days = all_answers[indices[:-train_size]]
+
         x_train = x_train_days.reshape(-1, x_train_days.shape[-1])
         y_train = y_train_days.reshape(-1)
         x_test = x_test_days.reshape(-1, x_test_days.shape[-1])
