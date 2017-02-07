@@ -55,7 +55,7 @@ def marker():
             files.append(f)
 
     return render_template('marker.html', images=files)
-    
+
 
 @app.route('/labeler', methods=['GET', 'POST'])
 def labeler():
@@ -71,15 +71,15 @@ def labeler():
     # we assume that directory walked contains DATE/TIME.png files
     # othewise it may crash -- needs some testing
     subdirs = [d for d in os.listdir(dataset_dir)
-                    if os.path.isdir(os.path.join(dataset_dir, d))]
-            
+               if os.path.isdir(os.path.join(dataset_dir, d))]
+
     for subdir in subdirs:
         data[subdir] = []
         for f in sorted(os.listdir(os.path.join(dataset_dir, subdir))):
             img = os.path.join(subdir, f)
             js = os.path.join(dataset_dir,
                               img[:-len(app.config['IMAGE_SUFFIX'])+1]+'json')
-            
+
             labeled = False
             if os.path.isfile(js):
                 labeled = True

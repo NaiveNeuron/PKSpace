@@ -12,7 +12,7 @@ except IOError:
 # line, it's possible required libraries won't be in your searchable path
 #
 
-from configapp.configapp import app as application
+from configapp.configapp import app as application # noqa
 
 #
 # Below for testing only
