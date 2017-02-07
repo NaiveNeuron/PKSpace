@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PKSpace labeler app</title>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='css/jquery-ui.min.css') }}">
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='css/labeler.css') }}">
+</head>
+
+<body>
+  {% if nojson %}
+  <div id="labeler-header">
+    <h1>No json file with polygons found</h1>
+    <h3>Please <a href="{{ url_for('marker') }}">generate</a> one</h3>
+  </div>
+
+  {% else %}
+  <div id="tabs">
+    <ul>
+    {% for tab in tabs %}
+      <li><a href="#{{ tab }}">{{ tab }}</a></li>
+    {% endfor %}
+    </ul>
+
+    {% for subdir, images in imgs.iteritems() %}
+      <div id="{{ subdir }}">
+        {% for img in images %}
+        <span id="{{ img.src }}" {% if img.labeled %}class="green"{% endif %}>
+          {{ img.src }}
+        </span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div id="labeler-header">
+    <p>JSON output will be automatically saved into folder where the image
+       was loaded from</p>
+    <button id="savelabel">Save labeled image</button>
+    <button id="markall-occupied">Mark all occupied</button>
+    <button id="markall-vacant">Mark all vacant</button>
+    <button id="markall-reverse">Reverse all markings</button>
+  </div>
+
+  <div id="labeler-container">
+    <div id="masks">
+      <h4>Choose a mask</h4>
+      {% for mask in masks %}
+        <div class="mask" data-key="{{ mask }}">{{ mask }}</div>
+      {% endfor %}
+    </div>
+
+    <canvas id="labcanvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/labeler.js') }}"></script>
+  <script>
+
+    $(document).ready(function () {
+        $('#tabs').tabs();
+
+        var labeler = new Labeler();
+
+        $('#tabs > div > span').click(function(e) {
+            labeler.change_image($(this).attr('id'));
+        });
+
+        $('#masks .mask').click(function(e) {
+            $('#masks .mask').css('border-color', '#ccc');
+            labeler.change_mask($(this));
+        });
+
+        $('#labcanvas').click(function(e){
+            if (labeler.image != null) {
+                labeler.clicked(e.pageX, e.pageY);
+            }
+        });
+
+        $('#savelabel').click(function(e) {
+            labeler.save();
+        });
+
+        $('#markall-vacant').click(function(e){
+            labeler.set_occupancy_of_all(0);
+        });
+
+        $('#markall-occupied').click(function(e){
+            labeler.set_occupancy_of_all(1);
+        });
+
+        $('#markall-reverse').click(function(e){
+            labeler.reverse_occupancy_of_all();
+        });
+    });
+  </script>
+  {% endif %}
+
+</body>
+</html>
