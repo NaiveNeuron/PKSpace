@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>PKSpace live</title>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+
+    <link rel="stylesheet" type="text/css"
+        href="{{ url_for('static', filename='css/labeler.css') }}">
+</head>
+
+<body>
+  <div id="labeler-header">
+    <h1>Current prediction</h1>
+    <br> <br>
+    <img src="{{ url_for('data_image', filename='live.png') }}">
+  </div>
+</body>
+</html>
