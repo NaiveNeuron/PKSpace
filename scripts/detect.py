@@ -3,6 +3,7 @@ import cv2 as cv
 import click
 import numpy as np
 
+
 @click.command()
 @click.option('--filename',
               type=click.Path(exists=True),
