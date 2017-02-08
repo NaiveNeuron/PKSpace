@@ -25,9 +25,11 @@
 
 #masks {
     width: 300px;
+    margin-top: 5px;
     border: 1px solid #ccc;
     overflow: hidden;
-    float: left;
+    display: inline-block;
+    min-height: 480px;
 }
 
 #masks .mask {
