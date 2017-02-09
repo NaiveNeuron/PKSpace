@@ -1,4 +1,4 @@
-body > div {
+body > #masker > div {
     margin-top: 10px;
 }
 
@@ -30,6 +30,12 @@ body > div {
 }
 .btn-change.down {
     background-color: red;
+}
+
+
+/* mask creator */
+#masker {
+    margin: 10px;
 }
 
 #image-previews {
@@ -67,4 +73,48 @@ body > div {
 #sliderval {
     width: 60px;
     margin-right: 5%;
+}
+
+/* labeler */
+#labeler {
+    margin: 10px;
+}
+.green {
+    background-color: #55FC8D;
+}
+
+#labeler-header, #labeler-container {
+    text-align: center;
+}
+#labcanvas {
+    border: 1px solid #ccc;
+}
+
+#tabs {
+    max-height: 300px;
+    overflow: auto;
+}
+
+#tabs > div > span {
+    display: inline-block;
+    padding: 20px 10px 20px 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+}
+
+#masks {
+    width: 300px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    display: inline-block;
+    min-height: 480px;
+}
+
+#masks .mask {
+    padding: 20px;
+    border: 2px solid #ccc;
+    cursor: pointer;
 }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}{% endblock%} | PKSpace</title>
+
+  <link rel="stylesheet" type="text/css"
+    href="{{ url_for('static', filename='css/jquery-ui.min.css') }}">
+  <link rel="stylesheet" type="text/css"
+    href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+  <link rel="stylesheet" type="text/css"
+    href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+  <link rel="stylesheet" type="text/css"
+    href="{{ url_for('static', filename='css/styles.css') }}">
+
+  {% block css %}{% endblock %}
+
+  <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+  {% block script %}{% endblock %}
+</head>
+
+{% set navigation_bar = [
+    ('/', 'index', 'Home'),
+    ('/marker', 'marker', 'Mask creator'),
+    ('/labeler', 'labeler', 'Labeler'),
+    ('/live', 'live', 'Live')
+] -%}
+
+{% set active_page = active_page|default('index') -%}
+
+<body>
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">PKSpace</a>
+      </div>
+      <ul class="nav navbar-nav">
+        {% for href, id, caption in navigation_bar %}
+          <li{% if id == active_page %} class="active"{% endif %}>
+            <a href="{{ href|e }}">{{ caption|e }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
+  {% block content %}{% endblock %}
+</body>
+</html>

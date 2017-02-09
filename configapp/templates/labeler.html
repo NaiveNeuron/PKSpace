@@ -1,17 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>PKSpace labeler app</title>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+{% extends "pkspace.html" %}    
+{% set active_page = "labeler" %}
 
-    <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='css/jquery-ui.min.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='css/labeler.css') }}">
-</head>
+{% block title %}Labeler{% endblock %}
 
-<body>
+{% block script %}
+  <script src="{{ url_for('static', filename='js/labeler.js') }}"></script>
+  <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#tabs').tabs();
+
+        var labeler = new Labeler();
+
+        $('#tabs > div > span').click(function(e) {
+            labeler.change_image($(this).attr('id'));
+        });
+
+        $('#masks .mask').click(function(e) {
+            $('#masks .mask').css('border-color', '#ccc');
+            labeler.change_mask($(this));
+        });
+
+        $('#labcanvas').click(function(e){
+            if (labeler.image != null) {
+                labeler.clicked(e.pageX, e.pageY);
+            }
+        });
+
+        $('#savelabel').click(function(e) {
+            labeler.save();
+        });
+
+        $('#markall-vacant').click(function(e){
+            labeler.set_occupancy_of_all(0);
+        });
+
+        $('#markall-occupied').click(function(e){
+            labeler.set_occupancy_of_all(1);
+        });
+
+        $('#markall-reverse').click(function(e){
+            labeler.reverse_occupancy_of_all();
+        });
+    });
+  </script>
+{% endblock %}
+
+{% block content %}
+<div id="labeler">
   {% if nojson %}
   <div id="labeler-header">
     <h1>No json file with polygons found</h1>
@@ -57,48 +93,6 @@
       Your browser does not support the HTML5 canvas tag.
     </canvas>
   </div>
-
-  <script src="{{ url_for('static', filename='js/labeler.js') }}"></script>
-  <script>
-
-    $(document).ready(function () {
-        $('#tabs').tabs();
-
-        var labeler = new Labeler();
-
-        $('#tabs > div > span').click(function(e) {
-            labeler.change_image($(this).attr('id'));
-        });
-
-        $('#masks .mask').click(function(e) {
-            $('#masks .mask').css('border-color', '#ccc');
-            labeler.change_mask($(this));
-        });
-
-        $('#labcanvas').click(function(e){
-            if (labeler.image != null) {
-                labeler.clicked(e.pageX, e.pageY);
-            }
-        });
-
-        $('#savelabel').click(function(e) {
-            labeler.save();
-        });
-
-        $('#markall-vacant').click(function(e){
-            labeler.set_occupancy_of_all(0);
-        });
-
-        $('#markall-occupied').click(function(e){
-            labeler.set_occupancy_of_all(1);
-        });
-
-        $('#markall-reverse').click(function(e){
-            labeler.reverse_occupancy_of_all();
-        });
-    });
-  </script>
   {% endif %}
-
-</body>
-</html>
+</div>
+{% endblock %}

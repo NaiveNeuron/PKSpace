@@ -1,60 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>PKSpace config app</title>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+{% extends "pkspace.html" %}
+{% set active_page = "marker" %}
 
-    <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
+{% block title %}Mask creator{% endblock %}
 
-<body>
-  <div>
-    <button class="btn btn-choose">Choose image &#x25BC;</button>
-    <div id="image-previews">
-      {% for image in images %}
-        <img src="{{ url_for('data_image', filename=image) }}" width="128" height="96">
-      {% endfor %}
-    </div>
-  </div>
-
-  <div>
-    <button type="button" class="btn btn-save">Save polygon</button>
-    <button type="button" class="btn btn-undo">Undo</button> 
-    <button type="button" class="btn btn-change">Drag points</button>
-    |
-    <button type="button" class="btn btn-rotate">Rotate</button>
-    |
-    <button type="button" class="btn btn-generate">Generate output</button>
-    
-  </div>
-
-  <div id="canvas-container">
-    <div id="slider-container">
-      <input id="slider" type="range" name="slider" min="0" max="360"
-        value="0" step="0.05">
-      <input id="sliderval" type="text" name="sliderval" value="0">
-    </div>
-    <canvas id="canvas" width="640" height="480">
-      Your browser does not support the HTML5 canvas tag.
-    </canvas>
-    <canvas id="canvas-mask" width="640" height="480">
-      Your browser does not support the HTML5 canvas tag.
-    </canvas>
-  </div>
-
-  <div id="output-container">
-    <h1>Output</h1>
-    <button type="button" class="btn btn-load">Load json</button><br>
-    <form method="POST">
-      <textarea name="output" rows="20" cols="100"></textarea> <br>
-      <input type="text" name="filename" placeholder="json name">
-      <button type="submit" name="send_to_labeler" class="btn">Save config</button>
-    </form>
-  </div>
-
+{% block script %}
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-  <script>
+  <script type="text/javascript">
     $(document).ready(function () {
         var polygons = new Polygons();
 
@@ -110,5 +61,52 @@
         });
     });
   </script>
-</body>
-</html>
+{% endblock %}
+
+{% block content %}
+<div id="masker">
+  <div>
+    <button class="btn btn-choose">Choose image &#x25BC;</button>
+    <div id="image-previews">
+      {% for image in images %}
+        <img src="{{ url_for('data_image', filename=image) }}" width="128" height="96">
+      {% endfor %}
+    </div>
+  </div>
+
+  <div>
+    <button type="button" class="btn btn-save">Save polygon</button>
+    <button type="button" class="btn btn-undo">Undo</button> 
+    <button type="button" class="btn btn-change">Drag points</button>
+    |
+    <button type="button" class="btn btn-rotate">Rotate</button>
+    |
+    <button type="button" class="btn btn-generate">Generate output</button>
+    
+  </div>
+
+  <div id="canvas-container">
+    <div id="slider-container">
+      <input id="slider" type="range" name="slider" min="0" max="360"
+        value="0" step="0.05">
+      <input id="sliderval" type="text" name="sliderval" value="0">
+    </div>
+    <canvas id="canvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+    <canvas id="canvas-mask" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+
+  <div id="output-container">
+    <h1>Output</h1>
+    <button type="button" class="btn btn-load">Load json</button><br>
+    <form method="POST">
+      <textarea name="output" rows="20" cols="100"></textarea> <br>
+      <input type="text" name="filename" placeholder="json name">
+      <button type="submit" name="send_to_labeler" class="btn">Save config</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
