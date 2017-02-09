@@ -34,7 +34,7 @@
         });
 
         $('.btn-change').click(function() {
-            $(this).toggleClass('down');
+            $(this).toggleClass('btn-warning');
             polygons.start_drag_points();
         });
 
@@ -66,7 +66,7 @@
 {% block content %}
 <div id="masker">
   <div>
-    <button class="btn btn-choose">Choose image &#x25BC;</button>
+    <button class="btn btn-primary btn-md btn-choose">Choose image &#x25BC;</button>
     <div id="image-previews">
       {% for image in images %}
         <img src="{{ url_for('data_image', filename=image) }}" width="128" height="96">
@@ -75,13 +75,13 @@
   </div>
 
   <div>
-    <button type="button" class="btn btn-save">Save polygon</button>
-    <button type="button" class="btn btn-undo">Undo</button> 
-    <button type="button" class="btn btn-change">Drag points</button>
+    <button type="button" class="btn btn-success btn-save">Save polygon</button>
+    <button type="button" class="btn btn-danger btn-undo">Undo</button> 
+    <button type="button" class="btn btn-info btn-change">Drag points</button>
     |
-    <button type="button" class="btn btn-rotate">Rotate</button>
+    <button type="button" class="btn btn-info btn-rotate">Rotate</button>
     |
-    <button type="button" class="btn btn-generate">Generate output</button>
+    <button type="button" class="btn btn-info btn-generate">Generate output</button>
     
   </div>
 
@@ -101,11 +101,12 @@
 
   <div id="output-container">
     <h1>Output</h1>
-    <button type="button" class="btn btn-load">Load json</button><br>
+    <button type="button" class="btn btn-primary btn-lg btn-load">Load json</button><br>
     <form method="POST">
       <textarea name="output" rows="20" cols="100"></textarea> <br>
       <input type="text" name="filename" placeholder="json name">
-      <button type="submit" name="send_to_labeler" class="btn">Save config</button>
+      <button type="submit" name="send_to_labeler"
+          class="btn btn-success btn-lg">Save config</button>
     </form>
   </div>
 </div>

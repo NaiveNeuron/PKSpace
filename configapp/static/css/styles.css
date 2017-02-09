@@ -2,37 +2,6 @@ body > #masker > div {
     margin-top: 10px;
 }
 
-.btn {
-    cursor: pointer;
-    background-color: #53BDFF;
-    border: 1px solid #4A6DD3;
-    color: white;
-    border-radius: 4px 4px 4px 4px;
-    -moz-border-radius: 4px 4px 4px 4px;
-    -webkit-border-radius: 4px 4px 4px 4px;
-    padding: 3px 5px 3px 5px;
-}
-.btn:hover {
-    background-color: #4A42DE;
-}
-.btn-save {
-    background-color: #32C31D;
-    color: black;
-}
-.btn-save:hover {
-    background-color: #238829;
-}
-.btn-undo {
-    background-color: #FF3F22;
-}
-.btn-undo:hover {
-    background-color: #FF1504;
-}
-.btn-change.down {
-    background-color: red;
-}
-
-
 /* mask creator */
 #masker {
     margin: 10px;
