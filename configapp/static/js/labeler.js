@@ -124,6 +124,9 @@ Labeler.prototype.load_polygons = function(obj) {
 }
 
 Labeler.prototype.save = function(saveurl) {
+    if (this.polygons.length == 0)
+        return;
+
     var imagejson = {'spots': []};
 
     for (var i = 0; i < this.polygons.length; i++) {

@@ -1,65 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>PKSpace labeler app</title>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+{% extends "pkspace.html" %}    
+{% set active_page = "labeler" %}
 
-    <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='css/jquery-ui.min.css') }}">
-    <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='css/labeler.css') }}">
-</head>
+{% block title %}Labeler{% endblock %}
 
-<body>
-  {% if nojson %}
-  <div id="labeler-header">
-    <h1>No json file with polygons found</h1>
-    <h3>Please <a href="{{ url_for('marker') }}">generate</a> one</h3>
-  </div>
-
-  {% else %}
-  <div id="tabs">
-    <ul>
-    {% for tab in tabs %}
-      <li><a href="#{{ tab }}">{{ tab }}</a></li>
-    {% endfor %}
-    </ul>
-
-    {% for subdir, images in imgs.iteritems() %}
-      <div id="{{ subdir }}">
-        {% for img in images %}
-        <span id="{{ img.src }}" {% if img.labeled %}class="green"{% endif %}>
-          {{ img.src }}
-        </span>
-        {% endfor %}
-      </div>
-    {% endfor %}
-  </div>
-
-  <div id="labeler-header">
-    <p>JSON output will be automatically saved into folder where the image
-       was loaded from</p>
-    <button id="savelabel">Save labeled image</button>
-    <button id="markall-occupied">Mark all occupied</button>
-    <button id="markall-vacant">Mark all vacant</button>
-    <button id="markall-reverse">Reverse all markings</button>
-  </div>
-
-  <div id="labeler-container">
-    <div id="masks">
-      <h4>Choose a mask</h4>
-      {% for mask in masks %}
-        <div class="mask" data-key="{{ mask }}">{{ mask }}</div>
-      {% endfor %}
-    </div>
-    <canvas id="labcanvas" width="640" height="480">
-      Your browser does not support the HTML5 canvas tag.
-    </canvas>
-  </div>
-
+{% block script %}
   <script src="{{ url_for('static', filename='js/labeler.js') }}"></script>
-  <script>
+  <script type="text/javascript">
 
     $(document).ready(function () {
         $('#tabs').tabs();
@@ -98,7 +44,55 @@
         });
     });
   </script>
-  {% endif %}
+{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<div id="labeler">
+  {% if nojson %}
+  <div id="labeler-header">
+    <h1>No json file with polygons found</h1>
+    <h3>Please <a href="{{ url_for('marker') }}">generate</a> one</h3>
+  </div>
+
+  {% else %}
+  <div id="tabs">
+    <ul>
+    {% for tab in tabs %}
+      <li><a href="#{{ tab }}">{{ tab }}</a></li>
+    {% endfor %}
+    </ul>
+
+    {% for subdir, images in imgs.iteritems() %}
+      <div id="{{ subdir }}">
+        {% for img in images %}
+        <span id="{{ img.src }}" {% if img.labeled %}class="green"{% endif %}>
+          {{ img.src }}
+        </span>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+
+  <div id="labeler-header">
+    <p>JSON output will be automatically saved into folder where the image
+       was loaded from</p>
+    <button id="savelabel" class="btn btn-success">Save labeled image</button>
+    <button id="markall-occupied" class="btn btn-info">Mark all occupied</button>
+    <button id="markall-vacant" class="btn btn-info">Mark all vacant</button>
+    <button id="markall-reverse" class="btn btn-info">Reverse all markings</button>
+  </div>
+
+  <div id="labeler-container">
+    <div id="masks">
+      <h4>Choose a mask</h4>
+      {% for mask in masks %}
+        <div class="mask" data-key="{{ mask }}">{{ mask }}</div>
+      {% endfor %}
+    </div>
+    <canvas id="labcanvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>PKSpace</title>
-    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+{% extends "pkspace.html" %}
+{% set active_page = "index" %}
 
-    <link rel="stylesheet" type="text/css"
-        href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
+{% block title %}Welcome{% endblock %}
 
-<body>
+{% block content %}
   <h1>Welcome to PKSpace dataset creator</h1>
   <a href="{{ url_for('marker') }}">Create a mask</a> |
   <a href="{{ url_for('labeler') }}">Create dataset</a>
-</body>
-</html>
+{% endblock %}
