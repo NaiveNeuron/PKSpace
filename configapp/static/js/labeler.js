@@ -24,8 +24,8 @@ Labeler.prototype.mouse_y = function(y) {
 }
 
 Labeler.prototype.change_image = function(src) {
-    this.image = document.createElement("IMG");
-    this.image.src = '/datasetimg/' + src;
+    /*this.image = document.createElement("IMG");
+    this.image.src = '/datasetimg/' + src;*/
 
     this.src = src;
 

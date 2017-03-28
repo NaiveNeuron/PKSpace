@@ -12,6 +12,8 @@ filedir = os.path.dirname(os.path.abspath(__file__))
 directory = os.path.join(filedir, app.config['IMAGE_PATH'])
 dataset_dir = os.path.join(filedir, app.config['DATASET_PATH'])
 mask_dir = os.path.join(filedir, app.config['MASK_PATH'])
+live_image_path = os.path.join(filedir, app.config['LIVE_IMAGE_PATH'])
+live_image_name = app.config['LIVE_IMAGE_NAME']
 
 
 @app.route('/')
@@ -21,7 +23,16 @@ def index():
 
 @app.route('/live')
 def live():
-    return render_template('live.html')
+    # temporary solution, just for testing
+    prediction = os.path.join(dataset_dir, '2017-01-03', '09_00_13.json')
+    with open(prediction) as f:
+        polygons = json.load(f)
+    return render_template('live.html', prediction=json.dumps(polygons))
+    
+
+@app.route('/live/image')
+def live_image():
+    return send_from_directory(live_image_path, live_image_name)
 
 
 @app.route('/marker/mask/<path:filename>')

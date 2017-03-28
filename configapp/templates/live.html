@@ -3,10 +3,26 @@
 
 {% block title %}Live{% endblock %}
 
+{% block script %}
+  <script src="{{ url_for('static', filename='js/live.js') }}"></script>
+  <script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var live = new Live();
+        
+        //labeler.load_polygons({{ prediction }});
+    });
+  </script>
+{% endblock %}
+
 {% block content %}
   <div id="labeler-header">
     <h1>Current prediction</h1>
     <br> <br>
-    <img src="{{ url_for('data_image', filename='live.png') }}">
+    <!--img src="{{ url_for('data_image', filename='live.png') }}"-->
+    <canvas id="livecanvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
   </div>
 {% endblock %}
