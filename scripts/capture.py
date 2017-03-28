@@ -74,6 +74,8 @@ def capture_and_save(warmup, threshold, path, image, rotate):
         print('Failed to capture frame, closing...')
         return
 
+    current_date = ''
+    current_time = ''
     if matches(frame, threshold):
         now = datetime.datetime.now()
         current_date = now.strftime(DIR)
@@ -87,6 +89,7 @@ def capture_and_save(warmup, threshold, path, image, rotate):
         cv2.imwrite(os.path.join(path, current_date, current_time), frame)
 
     cap.release()
+    print(os.path.join(current_date, current_time) if current_time else '')
 
 
 if __name__ == '__main__':
