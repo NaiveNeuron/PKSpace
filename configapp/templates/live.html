@@ -8,10 +8,7 @@
   <script type="text/javascript">
 
     $(document).ready(function () {
-
-        var live = new Live();
-        
-        //labeler.load_polygons({{ prediction }});
+        var live = new Live({{ prediction|tojson }});
     });
   </script>
 {% endblock %}
@@ -20,7 +17,7 @@
   <div id="labeler-header">
     <h1>Current prediction</h1>
     <br> <br>
-    <!--img src="{{ url_for('data_image', filename='live.png') }}"-->
+    <!-- TODO: set width and height of canvas -->
     <canvas id="livecanvas" width="640" height="480">
       Your browser does not support the HTML5 canvas tag.
     </canvas>

@@ -28,7 +28,7 @@ def live():
     with open(prediction) as f:
         polygons = json.load(f)
     return render_template('live.html', prediction=json.dumps(polygons))
-    
+
 
 @app.route('/live/image')
 def live_image():

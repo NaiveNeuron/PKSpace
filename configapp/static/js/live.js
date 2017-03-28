@@ -1,15 +1,10 @@
-function Point(x, y)
-{
-    this.x = x;
-    this.y = y;
-}
-
-function Live()
+function Live(json_string)
 {
     this.canvas = document.getElementById('livecanvas');
     this.ctx = this.canvas.getContext("2d");
     this.rect = this.canvas.getBoundingClientRect();
-    this.polygons = [];
+
+    this.json_string = json_string;
     
     this.image = new Image();
     this.image.src = '/live/image';
@@ -23,31 +18,33 @@ Live.prototype.redraw = function() {
     if (this.image !== null) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.drawImage(this.image, 0, 0);
-        //this.draw_polygons();
-    }
-}
-
-Labeler.prototype.draw_polygons = function() {
-    for (var i = 0; i < this.polygons.length; i++) {
-        this.draw_polygon(this.polygons[i][0], this.occupies[i]);
-    }
-}
-
-Live.prototype.load_polygons = function(str) {
-    // TODO: change this to load polygons along with their occupation
-    try {
-        var obj = JSON.parse(str)['spots'];
-        var tmp = [];
+        
+        var obj = JSON.parse(this.json_string)['spots'];
+        console.log(obj);
         for (var i = 0; i < obj.length; i++) {
-            tmp.push([[]]);
-            for (var j = 0; j < obj[i][0].length; j++) {
-                tmp[i][0].push(new Point(obj[i][0][j][0], obj[i][0][j][1]));
+            var polygon = obj[i]['points'];
+
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = '#0AFC04';
+            if (obj[i]['occupied'] == 1) {
+                this.ctx.strokeStyle = 'red';
             }
-            tmp[i].push(obj[i][1]);
+
+            this.ctx.lineWidth = 3;
+            this.ctx.moveTo(polygon[0][0], polygon[0][1]);
+
+            for (var j = 1; j < polygon.length; j++) {
+                this.ctx.lineTo(polygon[j][0], polygon[j][1]);
+            }
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+            if (obj[i]['occupied'] == 1) {
+                this.ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
+                this.ctx.fill();
+            }
+            this.ctx.restore();
         }
-        this.polygons = tmp;
-        this.redraw();
-    } catch(err) {
-        alert('Not a valid json.');
     }
 }
