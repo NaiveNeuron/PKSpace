@@ -3,7 +3,7 @@ import os
 import pickle
 import sys
 from os.path import dirname, abspath
-sys.path.append(dirname(abspath(__file__)))
+sys.path.append(dirname(dirname(abspath(__file__))))
 from pkspace.utils.loaders import PKSpaceLoader
 import click
 
