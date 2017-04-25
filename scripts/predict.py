@@ -4,16 +4,16 @@ import pickle
 import sys
 from os.path import dirname, abspath
 sys.path.append(dirname(dirname(abspath(__file__))))
-from pkspace.utils.loaders import PKSpaceLoader
-import click
+from pkspace.utils.loaders import PKSpaceLoader # noqa
+import click # noqa
 
 
 @click.command()
-@click.option('--mask_path',
+@click.option('--mask_path', required=True,
               help='Adress of json file of the mask')
-@click.option('--picture_path',
+@click.option('--picture_path', required=True,
               help='Adress of picture to be predicted')
-@click.option('--model_path',
+@click.option('--model_path', required=True,
               help='Path where pretrained model')
 @click.option('--output', default=None,
               help='Name of output file for predicted output')
@@ -23,7 +23,7 @@ def load_and_predict(mask_path, picture_path, model_path, output):
             print(file, "Path does not exist")
             return
     if output is None:
-        output = "{}_o.json".format(os.path.splitext(picture_path)[-2])
+        output = "{}_out.json".format(os.path.splitext(picture_path)[-2])
 
     if os.path.splitext(mask_path)[-1] == ".json":
         loader = PKSpaceLoader()
