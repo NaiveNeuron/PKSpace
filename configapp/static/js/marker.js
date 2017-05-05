@@ -268,14 +268,15 @@ Polygons.prototype.update_rotation = function(degrees) {
 
 Polygons.prototype.load_polygons = function(str) {
     try {
-        var obj = JSON.parse(str)['polygons'];
+        var obj = JSON.parse(str)['spots'];
+        console.log(obj);
         var tmp = [];
         for (var i = 0; i < obj.length; i++) {
             tmp.push([[]]);
-            for (var j = 0; j < obj[i][0].length; j++) {
-                tmp[i][0].push(new Point(obj[i][0][j][0], obj[i][0][j][1]));
+            for (var j = 0; j < obj[i]['points'].length; j++) {
+                tmp[i][0].push(new Point(obj[i]['points'][j][0], obj[i]['points'][j][1]));
             }
-            tmp[i].push(obj[i][1]);
+            tmp[i].push(obj[i]['rotation']);
         }
         this.polygons = tmp;
         this.redraw();
@@ -285,5 +286,20 @@ Polygons.prototype.load_polygons = function(str) {
 }
 
 Polygons.prototype.generate_output = function(selector) {
-    $(selector).val('{"polygons":' + JSON.stringify(this.polygons) + '}');
+    if (this.polygons.length == 0)
+        return;
+
+    var maskjson = {'spots': []};
+
+    for (var i = 0; i < this.polygons.length; i++) {
+        var spot = {'id': i, 'rotation': this.polygons[i][1]};
+
+        var points = [];
+        for (var j = 0; j < this.polygons[i][0].length; j++) {
+            points.push([this.polygons[i][0][j].x, this.polygons[i][0][j].y]);
+        }
+        spot['points'] = points;
+        maskjson['spots'].push(spot);
+    }
+    $(selector).val(JSON.stringify(maskjson));
 }

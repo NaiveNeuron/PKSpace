@@ -107,13 +107,14 @@ Labeler.prototype.redraw = function() {
 
 Labeler.prototype.load_polygons = function(obj) {
     try {
+        var obj = obj['spots'];
         var tmp = [];
         for (var i = 0; i < obj.length; i++) {
             tmp.push([[]]);
-            for (var j = 0; j < obj[i][0].length; j++) {
-                tmp[i][0].push(new Point(obj[i][0][j][0], obj[i][0][j][1]));
+            for (var j = 0; j < obj[i]['points'].length; j++) {
+                tmp[i][0].push(new Point(obj[i]['points'][j][0], obj[i]['points'][j][1]));
             }
-            tmp[i].push(obj[i][1]);
+            tmp[i].push(obj[i]['rotation']);
             this.occupies.push(0);
         }
         this.polygons = tmp;
@@ -163,7 +164,7 @@ Labeler.prototype.change_mask = function(selector) {
     var name = selector.attr('data-key');
     var _this = this;
     $.ajax({
-        url: '/marker/mask/' + name,
+        url: '/api/mask/' + name,
         type: 'GET',
         contentType: 'application/json',
         
