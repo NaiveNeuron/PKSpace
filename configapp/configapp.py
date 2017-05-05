@@ -24,7 +24,7 @@ def index():
 @app.route('/live')
 def live():
     # temporary solution, just for testing
-    prediction = os.path.join(dataset_dir, '2017-01-03', '09_00_13.json')
+    prediction = os.path.join(dataset_dir, '2017-04-26', '06_15_07.json')
     with open(prediction) as f:
         polygons = json.load(f)
     return render_template('live.html', prediction=json.dumps(polygons))
