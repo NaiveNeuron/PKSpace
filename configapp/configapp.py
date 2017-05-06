@@ -35,12 +35,12 @@ def live_image():
     return send_from_directory(live_image_path, live_image_name)
 
 
-@app.route('/marker/mask/<path:filename>')
+@app.route('/api/mask/<path:filename>')
 def get_mask(filename):
     mask = os.path.join(mask_dir, filename)
     if os.path.isfile(mask):
         with open(mask) as f:
-            polygons = json.load(f)['polygons']
+            polygons = json.load(f)
         return jsonify(result='OK', polygons=polygons)
     return jsonify(result='FAIL')
 
