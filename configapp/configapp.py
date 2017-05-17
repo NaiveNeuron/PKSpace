@@ -12,8 +12,7 @@ filedir = os.path.dirname(os.path.abspath(__file__))
 directory = os.path.join(filedir, app.config['IMAGE_PATH'])
 dataset_dir = os.path.join(filedir, app.config['DATASET_PATH'])
 mask_dir = os.path.join(filedir, app.config['MASK_PATH'])
-live_image_path = os.path.join(filedir, app.config['LIVE_IMAGE_PATH'])
-live_image_name = app.config['LIVE_IMAGE_NAME']
+predict_dir = os.path.join(filedir, app.config['PREDICTION_PATH'])
 
 
 @app.route('/')
@@ -23,11 +22,36 @@ def index():
 
 @app.route('/live')
 def live():
-    # temporary solution, just for testing
-    prediction = os.path.join(dataset_dir, '2017-04-26', '06_15_07.json')
-    with open(prediction) as f:
-        polygons = json.load(f)
-    return render_template('live.html', prediction=json.dumps(polygons))
+    data = {}
+    subdirs = [d for d in os.listdir(predict_dir)
+               if os.path.isdir(os.path.join(predict_dir, d))]
+
+    if not subdirs:
+        return render_template('live.html', nopredictions=True)
+
+    subdirs.sort()
+    latest_subdir = subdirs[-1]
+    latest_prediction = None
+    latest_img = None
+
+    for subdir in subdirs:
+        data[subdir] = []
+        jsons = os.listdir(os.path.join(predict_dir, subdir))
+        jsons.sort()
+
+        if subdir == latest_subdir:
+            latest_prediction = os.path.join(predict_dir, subdir, jsons[-1])
+            name = jsons[-1].replace('.json', app.config['IMAGE_SUFFIX'])
+            latest_img = os.path.join(dataset_dir, subdir, name)
+
+        for f in jsons:
+            data[subdir].append(os.path.join(subdir, f))
+
+    with open(latest_prediction) as f:
+        latest_json = json.load(f)
+
+    return render_template('live.html', predictions=data, tabs=subdirs,
+                            latest_img=latest_img, latest_json=latest_json)
 
 
 @app.route('/live/image')
