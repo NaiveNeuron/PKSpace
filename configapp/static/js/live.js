@@ -48,3 +48,11 @@ Live.prototype.redraw = function() {
         }
     }
 }
+
+Live.prototype.load_prediction = function(key) {
+
+}
+
+Live.prototype.load_image = function(key) {
+
+}

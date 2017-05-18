@@ -54,11 +54,6 @@ def live():
                             latest_img=latest_img, latest_json=latest_json)
 
 
-@app.route('/live/image')
-def live_image():
-    return send_from_directory(live_image_path, live_image_name)
-
-
 @app.route('/api/mask/<path:filename>')
 def get_mask(filename):
     mask = os.path.join(mask_dir, filename)
