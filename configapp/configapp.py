@@ -52,8 +52,8 @@ def live():
         latest_json = json.load(f)
 
     return render_template('live.html', predictions=data, tabs=subdirs,
-                            latest_img=latest_img, latest_json=latest_json,
-                            image_suffix=app.config['IMAGE_SUFFIX'])
+                           latest_img=latest_img, latest_json=latest_json,
+                           image_suffix=app.config['IMAGE_SUFFIX'])
 
 
 def get_json_file(path):
@@ -154,10 +154,12 @@ def savelabel(filename):
 def data_image(filename):
     return send_from_directory(directory, filename)
 
+
 @app.route('/image/captured/<path:img>')
 def captured_image(img):
     img = img.split('/')
     return send_from_directory(os.path.join(img_predict_dir, img[0]), img[1])
+
 
 @app.route('/datasetimg/<path:img>')
 def dataset_image(img):
