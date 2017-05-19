@@ -12,6 +12,7 @@ filedir = os.path.dirname(os.path.abspath(__file__))
 directory = os.path.join(filedir, app.config['IMAGE_PATH'])
 dataset_dir = os.path.join(filedir, app.config['DATASET_PATH'])
 mask_dir = os.path.join(filedir, app.config['MASK_PATH'])
+img_predict_dir = os.path.join(filedir, app.config['IMAGES_TO_PREDICT_PATH'])
 predict_dir = os.path.join(filedir, app.config['PREDICTION_PATH'])
 
 
@@ -42,7 +43,7 @@ def live():
         if subdir == latest_subdir:
             latest_prediction = os.path.join(predict_dir, subdir, jsons[-1])
             name = jsons[-1].replace('.json', app.config['IMAGE_SUFFIX'])
-            latest_img = os.path.join(dataset_dir, subdir, name)
+            latest_img = os.path.join(subdir, name)
 
         for f in jsons:
             data[subdir].append(os.path.join(subdir, f))
@@ -51,16 +52,31 @@ def live():
         latest_json = json.load(f)
 
     return render_template('live.html', predictions=data, tabs=subdirs,
-                            latest_img=latest_img, latest_json=latest_json)
+                            latest_img=latest_img, latest_json=latest_json,
+                            image_suffix=app.config['IMAGE_SUFFIX'])
+
+
+def get_json_file(path):
+    if os.path.isfile(path):
+        with open(path) as f:
+            polygons = json.load(f)
+        return polygons
+    return None
 
 
 @app.route('/api/mask/<path:filename>')
 def get_mask(filename):
-    mask = os.path.join(mask_dir, filename)
-    if os.path.isfile(mask):
-        with open(mask) as f:
-            polygons = json.load(f)
-        return jsonify(result='OK', polygons=polygons)
+    json = get_json_file(os.path.join(mask_dir, filename))
+    if json is not None:
+        return jsonify(result='OK', polygons=json)
+    return jsonify(result='FAIL')
+
+
+@app.route('/api/prediction/<path:filename>')
+def get_prediction(filename):
+    json = get_json_file(os.path.join(predict_dir, filename))
+    if json is not None:
+        return jsonify(result='OK', polygons=json)
     return jsonify(result='FAIL')
 
 
@@ -138,6 +154,10 @@ def savelabel(filename):
 def data_image(filename):
     return send_from_directory(directory, filename)
 
+@app.route('/image/captured/<path:img>')
+def captured_image(img):
+    img = img.split('/')
+    return send_from_directory(os.path.join(img_predict_dir, img[0]), img[1])
 
 @app.route('/datasetimg/<path:img>')
 def dataset_image(img):

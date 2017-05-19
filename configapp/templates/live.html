@@ -10,7 +10,12 @@
     $(document).ready(function () {
         $('#tabs').tabs();
 
-        var live = new Live({{ latest_json|tojson }});
+        var live = new Live({{ latest_json|tojson }}, '{{ latest_img }}',
+                            '{{ image_suffix }}');
+
+        $('#tabs > div > span').click(function(e) {
+            live.change_prediction($(this).attr('id'));
+        });
     });
   </script>
 {% endblock %}
