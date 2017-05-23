@@ -1,6 +1,7 @@
 import os
 import json
 import datetime
+import re
 
 from flask import (Flask, render_template, send_from_directory, request,
                    redirect, url_for, jsonify)
@@ -42,7 +43,7 @@ def live():
 
         if subdir == latest_subdir:
             latest_prediction = os.path.join(predict_dir, subdir, jsons[-1])
-            name = jsons[-1].replace('.json', app.config['IMAGE_SUFFIX'])
+            name = re.sub(r'\.json', app.config['IMAGE_SUFFIX'], jsons[-1])
             latest_img = os.path.join(subdir, name)
 
         for f in jsons:
@@ -131,7 +132,6 @@ def labeler():
                 labeled = True
 
             if f.endswith(app.config['IMAGE_SUFFIX']):
-
                 data[subdir].append({'src': os.path.join(subdir, f),
                                      'labeled': labeled})
 

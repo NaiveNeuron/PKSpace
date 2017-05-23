@@ -56,6 +56,9 @@ Live.prototype.change_prediction = function(src) {
 
 Live.prototype.load_prediction = function(key) {
     var _this = this;
+    var escaped = key.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+    $('#tabs > div > span#' + escaped).css('border-color', 'red');
+
     $.ajax({
         url: '/api/prediction/' + key,
         type: 'GET',
@@ -64,8 +67,7 @@ Live.prototype.load_prediction = function(key) {
         success: function(response) {
             if (response.result == 'OK') {
                 $('#tabs > div > span').css('border-color', '#ccc');
-                key = key.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-                $('#tabs > div > span#' + key).css('border-color', 'blue');
+                $('#tabs > div > span#' + escaped).css('border-color', 'blue');
                 _this.prediction = response.polygons;
                 _this.redraw();
             } else {
@@ -77,7 +79,7 @@ Live.prototype.load_prediction = function(key) {
 
 Live.prototype.load_image = function(key) {
     this.image = new Image();
-    this.image.src = '/image/captured/' + key.replace('.json', this.IMAGE_SUFFIX);
+    this.image.src = '/image/captured/' + key.replace(/\.json$/, this.IMAGE_SUFFIX);
     var _this = this;
     this.image.onload = function() {
         _this.load_prediction(key);
