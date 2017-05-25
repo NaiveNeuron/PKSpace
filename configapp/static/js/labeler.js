@@ -27,6 +27,7 @@ Labeler.prototype.change_image = function(src) {
     this.image.onload = function() {
         _this.redraw();
     };
+    this.image.onerror = function () { alert('IMAGE NOT FOUND'); };
 }
 
 Labeler.prototype.is_inside = function(vs, x, y) {
@@ -60,7 +61,7 @@ Labeler.prototype.clicked = function(x, y) {
 }
 
 Labeler.prototype.redraw = function() {
-    util_draw_polygons(this.canvas, this.ctx, this.image, this.polygons['spots'], this.occupies);
+    draw_labeled_polygons(this.canvas, this.ctx, this.image, this.polygons['spots'], this.occupies);
 }
 
 Labeler.prototype.load_polygons = function() {
@@ -116,6 +117,13 @@ Labeler.prototype.change_mask = function(selector) {
                 _this.load_polygons();
             } else {
                 alert('FAILED TO LOAD MASK');
+            }
+        },
+
+        error: function(xhr, ajax_options, thrown_error) {
+            console.log("XXXXXXXXXXXXXx");
+            if(xhr.status == 404) {
+                alert('JSON not found');
             }
         }
     });

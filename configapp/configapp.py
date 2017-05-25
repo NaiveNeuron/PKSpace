@@ -4,7 +4,7 @@ import datetime
 import re
 
 from flask import (Flask, render_template, send_from_directory, request,
-                   redirect, url_for, jsonify)
+                   redirect, url_for, jsonify, abort)
 
 app = Flask(__name__)
 app.config.from_object('configapp.default_settings')
@@ -157,7 +157,7 @@ def data_image(filename):
 
 def get_img_from_subdir(from_dir, img):
     if '/' not in img:
-        pass
+        abort(404)
     img = img.split('/')
     return send_from_directory(os.path.join(from_dir, img[0]), img[1])
 

@@ -1,4 +1,4 @@
-function util_draw_polygons(canvas, ctx, image, polygons, occupies)
+function draw_labeled_polygons(canvas, ctx, image, polygons, occupies)
 {
     try {
         if (image !== null) {

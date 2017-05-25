@@ -56,7 +56,7 @@ def matches(frame, threshold, proportion=3):
               help='Specify path and get True/False for bright/dark image')
 @click.option('--rotate', default=0,
               help='Rotate image (0 to 360 degrees)')
-@click.option('--print_path', default=False,
+@click.option('--print-path', default=False,
               help='Boolean value whether to print path of the captured image')
 def capture_and_save(warmup, threshold, path, image, rotate, print_path):
     if image:

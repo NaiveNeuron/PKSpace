@@ -7,21 +7,27 @@ function Live(latest_json, latest_img, image_suffix)
     this.prediction = latest_json;
     this.IMAGE_SUFFIX = image_suffix;
 
-    this.image = new Image();
-    this.image.src = '/image/captured/' + latest_img;
-    var _this = this;
-    this.image.onload = function() {
-        util_draw_polygons(_this.canvas, _this.ctx, _this.image, _this.prediction['spots'], null);
-    };
+    this.image = null;
+
+    this.change_prediction(latest_img, false);
 }
 
-Live.prototype.change_prediction = function(key) {
+Live.prototype.redraw = function() {
+    draw_labeled_polygons(this.canvas, this.ctx, this.image, this.prediction['spots'], null);
+}
+
+Live.prototype.change_prediction = function(key, load) {
     this.image = new Image();
     this.image.src = '/image/captured/' + key.replace(/\.json$/, this.IMAGE_SUFFIX);
     var _this = this;
     this.image.onload = function() {
-        _this.load_prediction(key);
+        if (load) {
+            _this.load_prediction(key);
+        } else {
+            _this.redraw();
+        }
     };
+    this.image.onerror = function () { alert('IMAGE NOT FOUND'); };
 }
 
 Live.prototype.load_prediction = function(key) {
@@ -39,9 +45,15 @@ Live.prototype.load_prediction = function(key) {
                 $('#tabs > div > span').css('border-color', '#ccc');
                 $('#tabs > div > span#' + escaped).css('border-color', 'blue');
                 _this.prediction = response.polygons;
-                util_draw_polygons(_this.canvas, _this.ctx, _this.image, _this.prediction['spots'], null);
+                _this.redraw();
             } else {
                 alert('FAILED TO LOAD PREDICTION');
+            }
+        },
+
+        error: function(xhr, ajax_options, thrown_error){
+            if(xhr.status == 404) {
+                alert('JSON NOT FOUND');
             }
         }
     });
