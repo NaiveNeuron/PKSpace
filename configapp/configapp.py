@@ -155,16 +155,21 @@ def data_image(filename):
     return send_from_directory(directory, filename)
 
 
+def get_img_from_subdir(from_dir, img):
+    if '/' not in img:
+        pass
+    img = img.split('/')
+    return send_from_directory(os.path.join(from_dir, img[0]), img[1])
+
+
 @app.route('/image/captured/<path:img>')
 def captured_image(img):
-    img = img.split('/')
-    return send_from_directory(os.path.join(img_predict_dir, img[0]), img[1])
+    return get_img_from_subdir(img_predict_dir, img)
 
 
 @app.route('/datasetimg/<path:img>')
 def dataset_image(img):
-    img = img.split('/')
-    return send_from_directory(os.path.join(dataset_dir, img[0]), img[1])
+    return get_img_from_subdir(dataset_dir, img)
 
 
 if __name__ == '__main__':
