@@ -56,7 +56,9 @@ def matches(frame, threshold, proportion=3):
               help='Specify path and get True/False for bright/dark image')
 @click.option('--rotate', default=0,
               help='Rotate image (0 to 360 degrees)')
-def capture_and_save(warmup, threshold, path, image, rotate):
+@click.option('--print-path', default=False,
+              help='Boolean value whether to print path of the captured image')
+def capture_and_save(warmup, threshold, path, image, rotate, print_path):
     if image:
         msg = "Matches image {0} with threshold {1}: {2}"
         print(msg.format(image, threshold,
@@ -74,6 +76,8 @@ def capture_and_save(warmup, threshold, path, image, rotate):
         print('Failed to capture frame, closing...')
         return
 
+    current_date = ''
+    current_time = ''
     if matches(frame, threshold):
         now = datetime.datetime.now()
         current_date = now.strftime(DIR)
@@ -87,6 +91,9 @@ def capture_and_save(warmup, threshold, path, image, rotate):
         cv2.imwrite(os.path.join(path, current_date, current_time), frame)
 
     cap.release()
+
+    if print_path:
+        print(os.path.join(current_date, current_time) if current_time else '')
 
 
 if __name__ == '__main__':

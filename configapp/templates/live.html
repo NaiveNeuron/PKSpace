@@ -3,10 +3,57 @@
 
 {% block title %}Live{% endblock %}
 
+{% block script %}
+  <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/live.js') }}"></script>
+  <script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#tabs').tabs();
+
+        var live = new Live({{ latest_json|tojson }}, '{{ latest_img }}',
+                            '{{ image_suffix }}');
+
+        $('#tabs > div > span').click(function(e) {
+            live.change_prediction($(this).attr('id'), true);
+        });
+    });
+  </script>
+{% endblock %}
+
 {% block content %}
-  <div id="labeler-header">
-    <h1>Current prediction</h1>
-    <br> <br>
-    <img src="{{ url_for('data_image', filename='live.png') }}">
+<div id="labeler">
+  {% if nopredictions %}
+    <div id="labeler-header">
+      <h1>No json file with prediction found</h1>
+    </div>
+
+  {% else %}
+    <div id="tabs">
+    <ul>
+    {% for tab in tabs %}
+      <li><a href="#{{ tab }}">{{ tab }}</a></li>
+    {% endfor %}
+    </ul>
+
+    {% for subdir, preds in predictions.iteritems() %}
+      <div id="{{ subdir }}">
+        {% for pred in preds %}
+        <span id="{{ pred }}">
+          {{ pred }}
+        </span>
+        {% endfor %}
+      </div>
+    {% endfor %}
   </div>
+  <div id="labeler-header">
+    <h1>Prediction</h1>
+    <br> <br>
+    <!-- TODO: set width and height of canvas -->
+    <canvas id="livecanvas" width="640" height="480">
+      Your browser does not support the HTML5 canvas tag.
+    </canvas>
+  </div>
+  {% endif %}
+</div>
 {% endblock %}

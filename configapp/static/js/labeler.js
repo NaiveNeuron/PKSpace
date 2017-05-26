@@ -1,16 +1,11 @@
-function Point(x, y)
-{
-    this.x = x;
-    this.y = y;
-}
-
 function Labeler()
 {
     this.canvas = document.getElementById('labcanvas');
     this.ctx = this.canvas.getContext("2d");
     this.rect = this.canvas.getBoundingClientRect();
+
     this.image = null;
-    this.polygons = [];
+    this.polygons = {'spots': []};
     this.occupies = [];
     this.src = '';
 }
@@ -24,9 +19,6 @@ Labeler.prototype.mouse_y = function(y) {
 }
 
 Labeler.prototype.change_image = function(src) {
-    this.image = document.createElement("IMG");
-    this.image.src = '/datasetimg/' + src;
-
     this.src = src;
 
     this.image = new Image();
@@ -35,6 +27,7 @@ Labeler.prototype.change_image = function(src) {
     this.image.onload = function() {
         _this.redraw();
     };
+    this.image.onerror = function () { alert('IMAGE NOT FOUND'); };
 }
 
 Labeler.prototype.is_inside = function(vs, x, y) {
@@ -43,8 +36,8 @@ Labeler.prototype.is_inside = function(vs, x, y) {
 
     var inside = false;
     for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-        var xi = vs[i].x, yi = vs[i].y;
-        var xj = vs[j].x, yj = vs[j].y;
+        var xi = vs[i][0], yi = vs[i][1];
+        var xj = vs[j][0], yj = vs[j][1];
         var intersect = ((yi > y) != (yj > y))
             && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
@@ -55,8 +48,8 @@ Labeler.prototype.is_inside = function(vs, x, y) {
 Labeler.prototype.clicked = function(x, y) {
     x = this.mouse_x(x);
     y = this.mouse_y(y);
-    for (var i = 0; i < this.polygons.length; i++) {
-        if (this.is_inside(this.polygons[i][0], x, y)) {
+    for (var i = 0; i < this.polygons['spots'].length; i++) {
+        if (this.is_inside(this.polygons['spots'][i]['points'], x, y)) {
             if (this.occupies[i] == 1)
                 this.occupies[i] = 0;
             else
@@ -67,57 +60,16 @@ Labeler.prototype.clicked = function(x, y) {
     }
 }
 
-Labeler.prototype.draw_polygon = function(polygon, occupied) {
-    this.ctx.save();
-    this.ctx.beginPath();
-    this.ctx.strokeStyle = '#0AFC04';
-    if (occupied == 1) {
-        this.ctx.strokeStyle = 'red';
-    }
-
-    this.ctx.lineWidth = 3;
-    this.ctx.moveTo(polygon[0].x, polygon[0].y);
-
-    for (var i = 1; i < polygon.length; i++) {
-        this.ctx.lineTo(polygon[i].x, polygon[i].y);
-    }
-    this.ctx.closePath();
-    this.ctx.stroke();
-
-    if (occupied == 1) {
-        this.ctx.fillStyle = "rgba(255, 0, 0, 0.2)";
-        this.ctx.fill();
-    }
-    this.ctx.restore();
-}
-
-Labeler.prototype.draw_polygons = function() {
-    for (var i = 0; i < this.polygons.length; i++) {
-        this.draw_polygon(this.polygons[i][0], this.occupies[i]);
-    }
-}
-
 Labeler.prototype.redraw = function() {
-    if (this.image != null) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.drawImage(this.image, 0, 0);
-        this.draw_polygons();
-    }
+    draw_labeled_polygons(this.canvas, this.ctx, this.image, this.polygons['spots'], this.occupies);
 }
 
-Labeler.prototype.load_polygons = function(obj) {
+Labeler.prototype.load_polygons = function() {
     try {
-        var obj = obj['spots'];
-        var tmp = [];
-        for (var i = 0; i < obj.length; i++) {
-            tmp.push([[]]);
-            for (var j = 0; j < obj[i]['points'].length; j++) {
-                tmp[i][0].push(new Point(obj[i]['points'][j][0], obj[i]['points'][j][1]));
-            }
-            tmp[i].push(obj[i]['rotation']);
+        this.occupies = [];
+        for (var i = 0; i < this.polygons['spots'].length; i++) {
             this.occupies.push(0);
         }
-        this.polygons = tmp;
         this.redraw();
     } catch(err) {
         alert('Not a valid json.');
@@ -125,24 +77,14 @@ Labeler.prototype.load_polygons = function(obj) {
 }
 
 Labeler.prototype.save = function(saveurl) {
-    if (this.polygons.length == 0)
+    if (this.polygons['spots'].length == 0)
         return;
 
-    var imagejson = {'spots': []};
-
-    for (var i = 0; i < this.polygons.length; i++) {
-        var spot = {'id': i, 'rotation': this.polygons[i][1],
-                    'occupied': this.occupies[i]};
-
-        var points = [];
-        for (var j = 0; j < this.polygons[i][0].length; j++) {
-            points.push([this.polygons[i][0][j].x, this.polygons[i][0][j].y]);
-        }
-        spot['points'] = points;
-        imagejson['spots'].push(spot);
+    for (var i = 0; i < this.polygons['spots'].length; i++) {
+        this.polygons['spots'][i]['occupied'] = this.occupies[i];
     }
 
-    var toSend = {labeled: imagejson};
+    var toSend = {labeled: this.polygons};
 
     $.ajax({
         url: '/savelabel/' + this.src,
@@ -171,23 +113,31 @@ Labeler.prototype.change_mask = function(selector) {
         success: function(response) {
             if (response.result == 'OK') {
                 selector.css('border-color', 'blue');
-                _this.load_polygons(response.polygons);
+                _this.polygons = response.polygons;
+                _this.load_polygons();
             } else {
                 alert('FAILED TO LOAD MASK');
+            }
+        },
+
+        error: function(xhr, ajax_options, thrown_error) {
+            console.log("XXXXXXXXXXXXXx");
+            if(xhr.status == 404) {
+                alert('JSON not found');
             }
         }
     });
 }
 
 Labeler.prototype.set_occupancy_of_all = function(occupancy) {
-    for (var i = 0; i < this.polygons.length; i++) {
+    for (var i = 0; i < this.polygons['spots'].length; i++) {
         this.occupies[i] = occupancy;
     }
     this.redraw();
 }
 
 Labeler.prototype.reverse_occupancy_of_all = function(occupancy) {
-    for (var i = 0; i < this.polygons.length; i++) {
+    for (var i = 0; i < this.polygons['spots'].length; i++) {
         this.occupies[i] = !this.occupies[i];
     }
     this.redraw();
