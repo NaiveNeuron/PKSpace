@@ -1,3 +1,0 @@
-source ${OPENSHIFT_HOMEDIR}python/virtenv/bin/activate
-
-export PYTHON_EGG_CACHE=${OPENSHIFT_HOME_DIR}python/virtenv/lib/python-2.7/site-packages
