@@ -10,37 +10,44 @@ import click # noqa
 
 @click.command()
 @click.option('--mask_path', required=True,
-              help='Adress of json file of the mask')
+              help='Path of json file of the mask')
 @click.option('--picture_path', required=True,
-              help='Adress of picture to be predicted')
+              help='Path of picture to be predicted')
 @click.option('--model_path', required=True,
-              help='Path where pretrained model')
+              help='Path where pretrained model is located')
+@click.option('--predict_dir', default='.',
+              help='Directory for storing predictions')
 @click.option('--output', default=None,
-              help='Name of output file for predicted output')
-def load_and_predict(mask_path, picture_path, model_path, output):
-    for file in (mask_path, picture_path, model_path):
+              help='Name of file for predicted output')
+def load_and_predict(mask_path, picture_path, model_path, pred_dir, output):
+    for file in (mask_path, picture_path, model_path, pred_dir):
         if not os.path.exists(file):
-            print(file, "Path does not exist")
+            print(file, 'Path does not exist')
             return
-    if output is None:
-        output = "{}_out.json".format(os.path.splitext(picture_path)[-2])
 
-    if os.path.splitext(mask_path)[-1] == ".json":
+    if output is None:
+        output = '{}_out.json'.format(os.path.splitext(picture_path)[-2])
+
+    if os.path.splitext(mask_path)[-1] == '.json':
         loader = PKSpaceLoader()
         pictures, _ = loader.load_pic(picture_path, mask_path)
     else:
-        print("Unknown description file")
+        print('Unknown description file')
         return
-    with open(model_path, "rb") as fp:
+
+    with open(model_path, 'rb') as fp:
         model = pickle.load(fp)
     answers = model.predict(pictures)
+
     with open(mask_path, 'r') as fp:
         input_file = json.load(fp)
+
     count = 0
     for spot in input_file['spots']:
         spot['occupied'] = answers[count].item()
         count += 1
-    with open(output, 'w') as fp:
+
+    with open(os.path.join(pred_dir, output), 'w') as fp:
         json.dump(input_file, fp)
 
 
