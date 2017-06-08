@@ -43,7 +43,7 @@ def live():
 
         if subdir == latest_subdir:
             latest_prediction = os.path.join(predict_dir, subdir, jsons[-1])
-            name = re.sub(r'\.json', app.config['IMAGE_SUFFIX'], jsons[-1])
+            name = re.sub(r'\.json$', app.config['IMAGE_SUFFIX'], jsons[-1])
             latest_img = os.path.join(subdir, name)
 
         for f in jsons:
