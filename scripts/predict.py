@@ -33,6 +33,10 @@ def load_and_predict(mask_path, picture_path, model_path, predict_dir, output):
         dirname = os.path.basename(os.path.dirname(picture_path))
         output = os.path.join(dirname, basename)
 
+    fullpath = os.path.join(predict_dir, output)
+    if not os.path.exists(os.path.dirname(fullpath)):
+        os.makedirs(os.path.dirname(fullpath))
+
     if os.path.splitext(mask_path)[-1] == '.json':
         loader = PKSpaceLoader()
         pictures, _ = loader.load_pic(picture_path, mask_path)
@@ -52,7 +56,7 @@ def load_and_predict(mask_path, picture_path, model_path, predict_dir, output):
         spot['occupied'] = answers[count].item()
         count += 1
 
-    with open(os.path.join(predict_dir, output), 'w') as fp:
+    with open(fullpath, 'w') as fp:
         json.dump(input_file, fp)
 
 
