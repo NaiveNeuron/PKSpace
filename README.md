@@ -51,5 +51,6 @@ Navigate your webbrowser to `localhost:5000`
   Mark those parking spaces which are being vacant with green color and occupied ones with red color.
 * Click **Save labeled image** and continue by labeling another image.
 
+### Capturing images and predicting occupancy
 
-
+Script example for capturing and predicting occupancy of the parking lot
