@@ -6,7 +6,6 @@ import sys
 from os.path import dirname, abspath
 sys.path.append(dirname(dirname(abspath(__file__))))
 from pkspace.utils.loaders import PKSpaceLoader # noqa
-from configapp.default_settings import IMAGE_SUFFIX # noqa
 import click # noqa
 
 
@@ -21,7 +20,10 @@ import click # noqa
               help='Directory for storing predictions')
 @click.option('--output', default=None,
               help='Name of file for predicted output')
-def load_and_predict(mask_path, picture_path, model_path, predict_dir, output):
+@click.option('--img_suffix', default='.png',
+              help='Suffix of predicted image')
+def load_and_predict(mask_path, picture_path, model_path, predict_dir, output,
+                     img_suffix):
     for file in (mask_path, picture_path, model_path, predict_dir):
         if not os.path.exists(file):
             print(file, 'Path does not exist')
@@ -29,7 +31,7 @@ def load_and_predict(mask_path, picture_path, model_path, predict_dir, output):
 
     if output is None:
         basename = os.path.basename(picture_path)
-        basename = re.sub(IMAGE_SUFFIX + '$', '.json', basename)
+        basename = re.sub(img_suffix + '$', '.json', basename)
         dirname = os.path.basename(os.path.dirname(picture_path))
         output = os.path.join(dirname, basename)
 
