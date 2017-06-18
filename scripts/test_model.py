@@ -29,5 +29,6 @@ def test_model(dataset_mode, dataset_dir, model_file):
     model_answers = model.predict(spaces)
     print(classification_report(ground_answers, model_answers))
 
+
 if __name__ == '__main__':
     test_model()
