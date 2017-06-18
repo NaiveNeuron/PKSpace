@@ -1,8 +1,6 @@
 import os
 import click
 import pickle
-import sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from sklearn.neural_network import MLPClassifier
 from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
 from pkspace.utils import trainer
@@ -31,11 +29,13 @@ def train(dataset_mode, method, dataset_dir, output):
         loader = PKLotLoader()
 
     if method == 'MLP':
-        model = MLPClassifier(solver='lbfgs', hidden_layer_sizes=(15, 10), random_state=1)
+        model = MLPClassifier(solver='lbfgs', hidden_layer_sizes=(15, 10))
 
     spaces, answers = loader.load(dataset_dir)
     trained_model = trainer.train(spaces, answers, model)
     with open(output, 'wb') as out:
         pickle.dump(trained_model, out)
+
+
 if __name__ == '__main__':
     train()
