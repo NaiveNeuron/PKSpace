@@ -16,28 +16,23 @@ import click # noqa
               help='Path of picture to be predicted')
 @click.option('--model_path', required=True,
               help='Path where pretrained model is located')
-@click.option('--predict_dir', default='.',
-              help='Directory for storing predictions')
 @click.option('--output', default=None,
               help='Name of file for predicted output')
 @click.option('--img_suffix', default='.png',
               help='Suffix of predicted image')
-def load_and_predict(mask_path, picture_path, model_path, predict_dir, output,
-                     img_suffix):
-    for file in (mask_path, picture_path, model_path, predict_dir):
+def load_and_predict(mask_path, picture_path, model_path, output, img_suffix):
+    for file in (mask_path, picture_path, model_path):
         if not os.path.exists(file):
             print(file, 'Path does not exist')
             return
 
     if output is None:
-        basename = os.path.basename(picture_path)
-        basename = re.sub(img_suffix + '$', '.json', basename)
-        dirname = os.path.basename(os.path.dirname(picture_path))
-        output = os.path.join(dirname, basename)
+        output = '{}_out.json'.format(os.path.splitext(picture_path)[-2])
+    elif not output.endswith('.json'):
+        output = re.sub(img_suffix + '$', '.json', output)
 
-    fullpath = os.path.join(predict_dir, output)
-    if not os.path.exists(os.path.dirname(fullpath)):
-        os.makedirs(os.path.dirname(fullpath))
+    if not os.path.exists(os.path.dirname(output)):
+        os.makedirs(os.path.dirname(output))
 
     if os.path.splitext(mask_path)[-1] == '.json':
         loader = PKSpaceLoader()
@@ -58,7 +53,7 @@ def load_and_predict(mask_path, picture_path, model_path, predict_dir, output,
         spot['occupied'] = answers[count].item()
         count += 1
 
-    with open(fullpath, 'w') as fp:
+    with open(output, 'w') as fp:
         json.dump(input_file, fp)
 
 
