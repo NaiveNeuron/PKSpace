@@ -18,6 +18,12 @@ img_predict_dir = os.path.join(filedir, app.config['IMAGES_TO_PREDICT_PATH'])
 predict_dir = os.path.join(filedir, app.config['PREDICTION_PATH'])
 
 
+@app.context_processor
+def inject_picture_size():
+    return dict(PICTURE_WIDTH=app.config['PICTURE_WIDTH'],
+                PICTURE_HEIGHT=app.config['PICTURE_HEIGHT'])
+
+
 @app.route('/')
 def index():
     return render_template('index.html')

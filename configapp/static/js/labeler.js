@@ -1,7 +1,11 @@
-function Labeler()
+function Labeler(pic_width, pic_height)
 {
+    this.WIDTH = pic_width;
+    this.HEIGHT = pic_height;
     this.canvas = document.getElementById('labcanvas');
     this.ctx = this.canvas.getContext("2d");
+    this.ctx.canvas.width = this.WIDTH;
+    this.ctx.canvas.height = this.HEIGHT;
     this.rect = this.canvas.getBoundingClientRect();
 
     this.image = null;

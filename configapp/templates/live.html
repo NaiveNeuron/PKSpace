@@ -11,7 +11,8 @@
     $(document).ready(function () {
         $('#tabs').tabs();
 
-        var live = new Live({{ latest_json|tojson }}, '{{ latest_img }}',
+        var live = new Live({{ PICTURE_WIDTH }}, {{ PICTURE_HEIGHT}},
+                            {{ latest_json|tojson }}, '{{ latest_img }}',
                             '{{ image_suffix }}');
 
         $('#tabs > div > span').click(function(e) {
@@ -49,8 +50,7 @@
   <div id="labeler-header">
     <h1>Prediction</h1>
     <br> <br>
-    <!-- TODO: set width and height of canvas -->
-    <canvas id="livecanvas" width="640" height="480">
+    <canvas id="livecanvas" width="{{ PICTURE_WIDTH }}" height="{{ PICTURE_HEIGHT }}">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
   </div>
