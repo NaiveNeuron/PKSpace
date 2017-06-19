@@ -7,7 +7,8 @@ from flask import (Flask, render_template, send_from_directory, request,
                    redirect, url_for, jsonify, abort)
 
 app = Flask(__name__)
-app.config.from_object('configapp.default_settings')
+app.config.from_json('config_default.json')
+app.config.from_json('config.json', silent=True)
 
 filedir = os.path.dirname(os.path.abspath(__file__))
 directory = os.path.join(filedir, app.config['IMAGE_PATH'])

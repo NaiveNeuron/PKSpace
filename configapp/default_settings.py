@@ -1,7 +1,0 @@
-DEBUG = True
-IMAGE_PATH = 'test_images/'
-IMAGE_SUFFIX = '.png'
-DATASET_PATH = '../../test_data'
-IMAGES_TO_PREDICT_PATH = '../../test_data'
-MASK_PATH = '../../masks'
-PREDICTION_PATH = '../../predictions'
