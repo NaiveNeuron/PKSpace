@@ -18,7 +18,7 @@ from pkspace.utils import trainer
               help='Name of output file for trained model')
 def train(loader, model_type, dataset_dir, output):
     if not os.path.isdir(dataset_dir):
-        print('{} is not a directory'.format(dataset_dir), file=sys.stderr)
+        sys.stderr.write('{} is not a directory'.format(dataset_dir))
         sys.exit(1)
 
     if loader == 'PKSpace':
