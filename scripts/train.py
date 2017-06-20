@@ -1,7 +1,6 @@
 import os
 import click
 import pickle
-
 import sys
 from sklearn.neural_network import MLPClassifier
 from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
