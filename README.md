@@ -16,7 +16,9 @@ run
 
 ### Setting up global variables
 
-Open `configapp/default_settings.py` file and edit variables as follows:
+Default settings are stored in `configapp/config_default.json` file. We don't
+recommend overwriting these, but insted create a file `configapp/config.json`
+where you are able to overwrite part of these variables. 
 
 * `IMAGE_PATH` - Path to folder containing images to be used as background when creating mask.
 * `IMAGE_SUFFIX` - Suffix of images taken from camera.
@@ -24,6 +26,8 @@ Open `configapp/default_settings.py` file and edit variables as follows:
 * `IMAGES_TO_PREDICT_PATH` - Path to folder containing images which are about to be predicted. The subfolder structure looks the same like `DATASET_PATH`.
 * `MASK_PATH` - Path to folder containing masks for labeling images.
 * `PREDICTION_PATH` - Path to folder containing predicted images. The subfolder structure looks the same like `IMAGES_TO_PREDICT_PATH`.
+* `PICTURE_WIDTH` - Width of captured pictures.
+* `PICTURE_HEIGHT` - Height of captured pictures.
 
 ### Creating your own dataset
 
@@ -54,3 +58,4 @@ Navigate your webbrowser to `localhost:5000`
 ### Capturing images and predicting occupancy
 
 Script example for capturing and predicting occupancy of the parking lot
+
