@@ -6,8 +6,8 @@ from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
 
 
 @click.command()
-@click.option('--loader', '-l', type=click.Choice(['PKLot, PKSpace']),
-              default='PKSpace', help='Loader to be used to load dataset')
+@click.option('--loader', '-l', type=click.Choice(['PKLot', 'PKSpace']),
+              default='PKSpace', help='Loader used to load dataset')
 @click.argument('dataset_dir')
 @click.argument('model_file')
 def test_model(loader, dataset_dir, model_file):
