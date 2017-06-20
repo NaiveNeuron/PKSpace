@@ -1,10 +1,9 @@
 import os
 import click
-import pickle
 import sys
+from sklearn.externals import joblib
 from sklearn.neural_network import MLPClassifier
 from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
-from pkspace.utils import trainer
 
 
 @click.command()
@@ -12,6 +11,8 @@ from pkspace.utils import trainer
               default='PKSpace', help='Loader used to load dataset')
 @click.option('--model_type', '-mt', type=click.Choice(['MLP']), default='MLP',
               help='Type of model to be trained')
+# @click.option('--hidden_later', '-hl', default=(15, 10),
+#               help='Hidden layers of MLP, if MLP is chosen as model_type')
 @click.option('--model_path', '-pm', type=click.Path(exists=True),
               default=None,
               help='Path to trained model, to be used as a base in training')
@@ -28,16 +29,23 @@ def train(loader, model_type, model_path, dataset_dir, output):
     elif loader == 'PKLot':
         loader = PKLotLoader()
 
+    spaces, answers = loader.load(dataset_dir)
+
     if model_path is not None:
-        with open(model_path, 'rb') as fp:
-            model = pickle.load(fp)
+        model = joblib.load(model_path)
+
+        if not callable(getattr(model, 'partial_fit', None)):
+            sys.stderr.write('{} is not further trainable'.format(model_path))
+            sys.exit(1)
+
+        trained_model = model.partial_fit(spaces, answers)
+
     elif model_type == 'MLP':
         model = MLPClassifier(solver='lbfgs', hidden_layer_sizes=(15, 10))
 
-    spaces, answers = loader.load(dataset_dir)
-    trained_model = trainer.train(spaces, answers, model)
-    with open(output, 'wb') as out:
-        pickle.dump(trained_model, out)
+        trained_model = model.partial_fit(spaces, answers, [0, 1])
+
+    joblib.dump(trained_model, output, protocol=0)
 
 
 if __name__ == '__main__':
