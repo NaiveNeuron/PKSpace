@@ -1,7 +1,12 @@
-function Live(latest_json, latest_img, image_suffix)
+function Live(pic_width, pic_height, latest_json, latest_img, image_suffix)
 {
+    this.WIDTH = pic_width;
+    this.HEIGHT = pic_height;
+
     this.canvas = document.getElementById('livecanvas');
     this.ctx = this.canvas.getContext("2d");
+    this.ctx.canvas.width = this.WIDTH;
+    this.ctx.canvas.height = this.HEIGHT;
     this.rect = this.canvas.getBoundingClientRect();
 
     this.prediction = latest_json;

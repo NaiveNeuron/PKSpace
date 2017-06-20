@@ -8,10 +8,10 @@ Point.prototype.toJSON = function() {
         return [this.x, this.y];
 }
 
-function Polygons()
+function Polygons(pic_width, pic_height)
 {
-    this.WIDTH = 640;
-    this.HEIGHT = 480;
+    this.WIDTH = pic_width;
+    this.HEIGHT = pic_height;
     this.RADIUS = 6;
 
     this.polygons = [];

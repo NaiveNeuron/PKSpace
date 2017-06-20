@@ -7,7 +7,7 @@
   <script src="{{ url_for('static', filename='js/marker.js') }}"></script>
   <script type="text/javascript">
     $(document).ready(function () {
-        var polygons = new Polygons();
+        var polygons = new Polygons({{ PICTURE_WIDTH }}, {{ PICTURE_HEIGHT }});
 
         $('#canvas').mousedown(function(e) {
             polygons.add_point(e.pageX, e.pageY);
@@ -91,10 +91,10 @@
         value="0" step="0.05">
       <input id="sliderval" type="text" name="sliderval" value="0">
     </div>
-    <canvas id="canvas" width="640" height="480">
+    <canvas id="canvas" width="{{ PICTURE_WIDTH }}" height="{{ PICTURE_HEIGHT }}">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
-    <canvas id="canvas-mask" width="640" height="480">
+    <canvas id="canvas-mask" width="{{ PICTURE_WIDTH }}" height="{{ PICTURE_HEIGHT }}">
       Your browser does not support the HTML5 canvas tag.
     </canvas>
   </div>

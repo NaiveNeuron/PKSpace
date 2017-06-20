@@ -5,5 +5,7 @@
     "DATASET_PATH": "../../test_data",
     "IMAGES_TO_PREDICT_PATH": "../../test_data",
     "MASK_PATH": "../../masks",
-    "PREDICTION_PATH": "../../predictions"
+    "PREDICTION_PATH": "../../predictions",
+    "PICTURE_WIDTH": 640,
+    "PICTURE_HEIGHT": 480
 }
