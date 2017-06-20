@@ -9,7 +9,7 @@ from pkspace.utils import trainer
 
 
 @click.command()
-@click.option('--loader', '-t', type=click.Choice(['PKLot', 'PKSpace']),
+@click.option('--loader', '-l', type=click.Choice(['PKLot', 'PKSpace']),
               default='PKSpace', help='Loader used to load dataset')
 @click.option('--model_type', '-mt', type=click.Choice(['MLP']), default='MLP',
               help='Type of model to be trained')
