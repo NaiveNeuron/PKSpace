@@ -6,21 +6,18 @@ from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
 
 
 @click.command()
-@click.option('--PKSpace', 'dataset_mode', flag_value='PKSpace',
-              default=True)
-@click.option('--PKLot', 'dataset_mode', flag_value='PKLot')
-@click.option('--dataset_dir', required=True,
-              help='Directory of dataset for model to be tested on')
-@click.option('--model_file', required=True,
-              help='Pickle file of exported model')
-def test_model(dataset_mode, dataset_dir, model_file):
+@click.option('--loader', '-l', type=click.Choice(['PKLot, PKSpace']),
+              default='PKSpace', help='Loader to be used to load dataset')
+@click.argument('dataset_dir')
+@click.argument('model_file')
+def test_model(loader, dataset_dir, model_file):
     if not os.path.isdir(dataset_dir):
         print('{} is not a directory')
         return
 
-    if dataset_mode == 'PKSpace':
+    if loader == 'PKSpace':
         loader = PKSpaceLoader()
-    elif dataset_mode == 'PKLot':
+    elif loader == 'PKLot':
         loader = PKLotLoader()
 
     with open(model_file, 'rb') as mp:
