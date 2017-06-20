@@ -13,10 +13,13 @@ from pkspace.utils import trainer
               default='PKSpace', help='Loader used to load dataset')
 @click.option('--model_type', '-mt', type=click.Choice(['MLP']), default='MLP',
               help='Type of model to be trained')
-@click.argument('dataset_dir')
+@click.option('--model_path', '-pm', type=click.Path(exists=True),
+              default=None,
+              help='Path to trained model, to be used as a base in training')
+@click.argument('dataset_dir', type=click.Path(exists=True))
 @click.option('--output', '-o', default='out.pkl',
-              help='Name of output file for trained model')
-def train(loader, model_type, dataset_dir, output):
+              help='Path to output file for trained model')
+def train(loader, model_type, model_path, dataset_dir, output):
     if not os.path.isdir(dataset_dir):
         sys.stderr.write('{} is not a directory'.format(dataset_dir))
         sys.exit(1)
@@ -26,7 +29,10 @@ def train(loader, model_type, dataset_dir, output):
     elif loader == 'PKLot':
         loader = PKLotLoader()
 
-    if model_type == 'MLP':
+    if model_path is not None:
+        with open(model_path, 'rb') as fp:
+            model = pickle.load(fp)
+    elif model_type == 'MLP':
         model = MLPClassifier(solver='lbfgs', hidden_layer_sizes=(15, 10))
 
     spaces, answers = loader.load(dataset_dir)
