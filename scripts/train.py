@@ -1,7 +1,10 @@
+import os
 import click
+import sys
 from sklearn.externals import joblib
-from sklearn.neural_network import MLPClassifier
-from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from sklearn.neural_network import MLPClassifier # noqa
+from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader # noqa
 
 
 @click.command()
