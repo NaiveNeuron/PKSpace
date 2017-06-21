@@ -1,6 +1,4 @@
-import os
 import click
-import sys
 from sklearn.externals import joblib
 from sklearn.neural_network import MLPClassifier
 from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
