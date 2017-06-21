@@ -55,7 +55,19 @@ Navigate your webbrowser to `localhost:5000`
   Mark those parking spaces which are being vacant with green color and occupied ones with red color.
 * Click **Save labeled image** and continue by labeling another image.
 
+#### Training models
+
+TODO
+
 ### Capturing images and predicting occupancy
 
 Script example for capturing and predicting occupancy of the parking lot
+
+```bash
+pushd path/to/PKSpace/
+        saved=`python scripts/capture.py --path=path/to/IMAGES_TO_PREDICT --rotate=180 --print_path=True`
+        TODO PREDICT
+popd
+```
+
 
