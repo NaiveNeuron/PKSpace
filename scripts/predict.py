@@ -24,8 +24,10 @@ from pkspace.utils.loaders import PKSpaceLoader # noqa
 def load_and_predict(mask_path, picture_path, model_path, output, img_suffix):
     if output is None:
         output = '{}_out.json'.format(os.path.splitext(picture_path)[-2])
-    elif not output.endswith('.json'):
+    elif output.endswith(img_suffix):
         output = re.sub(img_suffix + '$', '.json', output)
+    elif not output.endswith('.json'):
+        output = '{0}{1}'.format(output, '.json')
 
     if not os.path.exists(dirname(output)):
         os.makedirs(dirname(output))
