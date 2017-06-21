@@ -13,10 +13,12 @@ from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
               type=int,
               help='Hidden layers of MLP, if MLP is chosen as model_type')
 @click.option('--model_path', '-p', default=None,
-              type=click.Path(exists=True, dir_okay=False, file_okay=True),
+              type=click.Path(exists=True, dir_okay=False, file_okay=True,
+                              resolve_path=True),
               help='Path to trained model, to be used as a base in training')
 @click.argument('dataset_dir',
-                type=click.Path(exists=True, file_okay=False, dir_okay=True))
+                type=click.Path(exists=True, file_okay=False, dir_okay=True,
+                                resolve_path=True))
 @click.option('--output', '-o', default='out.pkl', type=click.Path(),
               help='Path to output file for trained model')
 def train(loader, model_type, hidden_layer, model_path, dataset_dir, output):
