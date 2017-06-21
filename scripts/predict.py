@@ -12,13 +12,13 @@ from pkspace.utils.loaders import PKSpaceLoader # noqa
 
 @click.command()
 @click.option('--mask_path', required=True,
-              type=click.Path(exists=True, dir_okay=False),
+              type=click.Path(exists=True, dir_okay=False, resolve_path=True),
               help='Path of json file of the mask')
 @click.option('--picture_path', required=True,
-              type=click.Path(exists=True, dir_okay=False),
+              type=click.Path(exists=True, dir_okay=False, resolve_path=True),
               help='Path of picture to be predicted')
 @click.option('--model_path', required=True,
-              type=click.Path(exists=True, dir_okay=False),
+              type=click.Path(exists=True, dir_okay=False, resolve_path=True),
               help='Path where pretrained model is located')
 @click.option('--output', default=None,
               help='Name of file for predicted output')
