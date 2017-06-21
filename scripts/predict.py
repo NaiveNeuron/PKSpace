@@ -5,8 +5,8 @@ import re
 import pickle
 import sys
 import click
-from os.path import dirname, abspath
-sys.path.append(dirname(dirname(abspath(__file__))))
+import imghdr
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from pkspace.utils.loaders import PKSpaceLoader # noqa
 
 
@@ -22,18 +22,22 @@ from pkspace.utils.loaders import PKSpaceLoader # noqa
               help='Path where pretrained model is located')
 @click.option('--output', default=None,
               help='Name of file for predicted output')
-@click.option('--img_suffix', default='.png',
-              help='Suffix of predicted image')
-def load_and_predict(mask_path, picture_path, model_path, output, img_suffix):
+def load_and_predict(mask_path, picture_path, model_path, output):
+    if imghdr.what(picture_path) is None:
+        print('Picture specified is not a valid image.', file=sys.stderr)
+        sys.exit(1)
+
     if output is None:
         output = '{}_out.json'.format(os.path.splitext(picture_path)[-2])
-    elif output.endswith(img_suffix):
-        output = re.sub(img_suffix + '$', '.json', output)
-    elif not output.endswith('.json'):
-        output = '{0}{1}'.format(output, '.json')
+    else:
+        extension = os.path.splitext(output)[-1]
+        if extension == '':
+            output = '{0}{1}'.format(output, '.json')
+        else:
+            output = re.sub(extension + '$', '.json', output)
 
-    if not os.path.exists(dirname(output)):
-        os.makedirs(dirname(output))
+    if not os.path.exists(os.path.dirname(output)):
+        os.makedirs(os.path.dirname(output))
 
     if os.path.splitext(mask_path)[-1] == '.json':
         loader = PKSpaceLoader()
