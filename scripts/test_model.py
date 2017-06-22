@@ -4,7 +4,10 @@ from collections import Counter
 from sklearn.metrics import classification_report
 from sklearn.externals import joblib
 from sklearn.metrics import f1_score, recall_score, precision_score
-from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from pkspace.utils.loaders import PKSpaceLoader, PKLotLoader # noqa
 
 
 @click.command()
@@ -31,15 +34,19 @@ def test_model(loader, dataset_dir, model_file, machine_friendly):
         answer = {'avg': {}, 0: {}, 1: {}}
         metrics = [precision_score, recall_score, f1_score]
         classes_counter = Counter(ground_answers)
+
         for i in [0, 1]:
             for func in metrics:
                 score = func(ground_answers, model_answers, pos_label=i)
                 answer[i][func.__name__] = score
             class_support = classes_counter[i]
+
+            # summing total support
             answer[i]['support'] = class_support
             old_sum_support = answer['avg'].get('support', 0)
             answer['avg']['support'] = old_sum_support + class_support
 
+        # calculating weighted average for all functions
         for column in [x.__name__ for x in metrics]:
             col_sum = 0
             for ans_class in [0, 1]:
