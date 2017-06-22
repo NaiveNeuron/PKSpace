@@ -57,7 +57,9 @@ Navigate your webbrowser to `localhost:5000`
 
 #### Training models
 
-TODO
+* Run `python scripts/train.py "path_to_dataset_directory"`
+* Optional parameter `--model_path` or `-p`, that takes path to model you want to train further, if you want new model you don't use this.
+* Optional parameter `--output` or `-o` that specifies, where trained model is saved. By default model is saved into current working directory as out.pkl
 
 ### Capturing images and predicting occupancy
 
