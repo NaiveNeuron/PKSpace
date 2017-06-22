@@ -65,8 +65,8 @@ Script example for capturing and predicting occupancy of the parking lot
 
 ```bash
 pushd path/to/PKSpace/
-        saved=`python scripts/capture.py --path=path/to/IMAGES_TO_PREDICT --rotate=180 --print_path=True`
-        TODO PREDICT
+        img=`python scripts/capture.py --path=path/to/IMAGES_TO_PREDICT --rotate=180 --print_path=True`
+        python scripts/predict.py --mask_path=path/to/mask.json --picture_path=path/to/$img --model_path=pkspace/models/MLP.pkl.2 --output=path/to/predictions/$img
 popd
 ```
 
