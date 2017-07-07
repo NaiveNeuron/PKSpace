@@ -1,3 +1,4 @@
 click
 Flask
 numpy
+scikit-learn
